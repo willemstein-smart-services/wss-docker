@@ -1,0 +1,9 @@
+#!/bin/bash
+# sendmail-vervanger voor PAC: logt mail naar volume i.p.v. echt versturen.
+# De site gebruikt mail(); hier mag nooit iets het net op.
+mkdir -p /var/log/webstack
+{
+  echo "===== $(date -Is) ====="
+  cat
+  echo
+} >> /var/log/webstack/mail.log

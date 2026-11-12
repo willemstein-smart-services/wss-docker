@@ -22,6 +22,9 @@ services:
       - /volume1/docker/wss_monitoring/uptime-kuma:/home/devin/workspace/uptime-kuma
       # WSS Flows: draw.io docker
       - /volume1/docker/wss_flows:/home/devin/workspace/wss_flows
+      # WSS webserver docroot (Devin kan hier bestanden droppen, bv. drawio)
+      - /volume1/docker/webserver/www:/home/devin/workspace/web_www
+      # DB van wss-webserver bereikbaar via docker_network: wss-webserver:3306
     working_dir: /home/devin/workspace
     stdin_open: true
     tty: true
@@ -69,6 +72,40 @@ services:
     networks:
       docker_network:
         ipv4_address: 192.168.10.62
+
+  # ==========================================
+  # WSS WEBSERVER - APACHE + PHP + MARIADB (PAC)
+  # IP: 192.168.10.64 | http://192.168.10.64 (/adminer.php)
+  # DB: wss-webserver:3306 (ook bereikbaar vanuit devin)
+  # ==========================================
+  wss-webserver:
+    image: ghcr.io/willemstein-smart-services/wss-webserver:latest
+    pull_policy: always
+    container_name: wss-webserver
+    hostname: wss-webserver
+    restart: unless-stopped
+    environment:
+      TZ: Europe/Amsterdam
+      MYSQL_ROOT_PASSWORD: "VERVANG_DOOR_STERK_WACHTWOORD"
+      MYSQL_DATABASE: wss_pac
+      MYSQL_USER: wss
+      MYSQL_PASSWORD: "VERVANG_DOOR_STERK_WACHTWOORD"
+    volumes:
+      # Docroot (PAC-site) — Devin mountt dezelfde dir op workspace/web_www
+      - /volume1/docker/webserver/www:/var/www/html
+      # DB-data (persistent) — leeg = bootstrap + import uit initdb
+      - /volume1/docker/webserver/mysql:/var/lib/mysql
+      # .sql/.sql.gz hier = auto-import bij eerste boot (bv. wss_db.sql)
+      - /volume1/docker/webserver/initdb:/docker-entrypoint-initdb.d
+      # php-error.log + mail.log (mail-catcher)
+      - /volume1/docker/webserver/logs:/var/log/webstack
+      # cronjobs voor de site (zelfde regels als wss-devin)
+      - /volume1/docker/webserver/cron.d:/etc/cron.d
+    stdin_open: true
+    tty: true
+    networks:
+      docker_network:
+        ipv4_address: 192.168.10.64
 
 networks:
   docker_network:

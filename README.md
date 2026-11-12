@@ -9,6 +9,7 @@ org-GHCR: `ghcr.io/willemstein-smart-services/<image>:<tag>` via
 |---|---|
 | `wss-devin/` | dev-container: ttyd, cron, tooling |
 | `wss-monitoring/` | Uptime Kuma + ttyd |
+| `wss-webserver/` | Apache + mod_php + MariaDB (PAC) |
 | `.github/workflows/build-<image>.yml` | per-image build & push |
 | `stacks/wss/docker-compose.yml` | Portainer-stack (devin+flows+monitoring) |
 
