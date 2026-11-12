@@ -7,8 +7,77 @@
   "panels": [
     {
       "datasource": { "type": "loki", "uid": "loki" },
+      "fieldConfig": { "defaults": { "unit": "lps", "custom": { "drawStyle": "line", "fillOpacity": 12, "showPoints": "never", "stacking": { "mode": "none" } } }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 0 },
+      "id": 5,
+      "options": { "legend": { "calcs": ["lastNotNull", "max"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "sum by (job) (rate({job=~\".+\"}[$__interval]))",
+          "legendFormat": "{{job}}",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Logvolume per bron (regels/sec)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki" },
+      "fieldConfig": { "defaults": { "unit": "short", "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 10 }, { "color": "red", "value": 50 } ] } }, "overrides": [] },
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 8 },
+      "id": 6,
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "vertical",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "text": { "titleSize": 11, "valueSize": 11 },
+        "valueMode": "color"
+      },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "sum by (container) (count_over_time({job=\"docker\"} |~ \"(?i)error|exception|fatal\" [$__range]))",
+          "legendFormat": "{{container}}",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "title": "Error-regels per container (in gekozen periode)",
+      "type": "bargauge"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki" },
       "fieldConfig": { "defaults": {}, "overrides": [] },
-      "gridPos": { "h": 12, "w": 24, "x": 0, "y": 0 },
+      "gridPos": { "h": 11, "w": 24, "x": 0, "y": 18 },
+      "id": 7,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": true,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "{job=~\".+\"} |~ \"(?i)error|warn|fail|exception|fatal\"",
+          "refId": "A"
+        }
+      ],
+      "title": "Errors & warnings (alle bronnen)",
+      "type": "logs"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki" },
+      "fieldConfig": { "defaults": {}, "overrides": [] },
+      "gridPos": { "h": 11, "w": 24, "x": 0, "y": 29 },
       "id": 1,
       "options": {
         "dedupStrategy": "none",
@@ -33,7 +102,7 @@
     {
       "datasource": { "type": "loki", "uid": "loki" },
       "fieldConfig": { "defaults": {}, "overrides": [] },
-      "gridPos": { "h": 12, "w": 24, "x": 0, "y": 12 },
+      "gridPos": { "h": 11, "w": 24, "x": 0, "y": 40 },
       "id": 2,
       "options": {
         "dedupStrategy": "none",
@@ -88,5 +157,5 @@
   "timezone": "browser",
   "title": "WSS Logs Overzicht",
   "uid": "wss-logs-overview",
-  "version": 2
+  "version": 3
 }
