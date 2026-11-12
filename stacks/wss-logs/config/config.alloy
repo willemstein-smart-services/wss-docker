@@ -66,7 +66,31 @@ prometheus.scrape "kuma" {
 		password = env("KUMA_API_KEY")
 	}
 
+	forward_to = [prometheus.relabel.kuma_env.receiver]
+}
+
+// wss_env-label op Kuma-metrics: 'test' als monitor-naam of -url
+// 'test' bevat (example-test, /test_env/, Backend - TEST,
+// example-test.willemste.in, ...), anders 'prd'.
+prometheus.relabel "kuma_env" {
 	forward_to = [prometheus.remote_write.default.receiver]
+
+	rule {
+		target_label = "wss_env"
+		replacement  = "prd"
+	}
+	rule {
+		source_labels = ["monitor_name"]
+		regex         = "(?i).*test.*"
+		target_label  = "wss_env"
+		replacement   = "test"
+	}
+	rule {
+		source_labels = ["monitor_url"]
+		regex         = "(?i).*test.*"
+		target_label  = "wss_env"
+		replacement   = "test"
+	}
 }
 
 prometheus.remote_write "default" {

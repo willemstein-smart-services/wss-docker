@@ -73,7 +73,7 @@
             "type": "prometheus",
             "uid": "metrics"
           },
-          "expr": "monitor_status",
+          "expr": "monitor_status{wss_env=~\"$omgeving\"}",
           "legendFormat": "{{monitor_name}}",
           "refId": "A"
         }
@@ -181,7 +181,7 @@
             "type": "prometheus",
             "uid": "metrics"
           },
-          "expr": "100 * avg_over_time((monitor_status == bool 1)[$__range:])",
+          "expr": "100 * avg_over_time((monitor_status{wss_env=~\"$omgeving\"} == bool 1)[$__range:])",
           "format": "table",
           "instant": true,
           "refId": "A"
@@ -257,7 +257,7 @@
             "type": "prometheus",
             "uid": "metrics"
           },
-          "expr": "monitor_response_time > 1000",
+          "expr": "monitor_response_time{wss_env=~\"$omgeving\"} > 1000",
           "legendFormat": "{{monitor_name}}",
           "refId": "A"
         }
@@ -310,7 +310,7 @@
             "type": "prometheus",
             "uid": "metrics"
           },
-          "expr": "monitor_response_time <= 1000",
+          "expr": "monitor_response_time{wss_env=~\"$omgeving\"} <= 1000",
           "legendFormat": "{{monitor_name}}",
           "refId": "A"
         }
@@ -377,7 +377,7 @@
             "type": "prometheus",
             "uid": "metrics"
           },
-          "expr": "monitor_cert_days_remaining",
+          "expr": "monitor_cert_days_remaining{wss_env=~\"$omgeving\"}",
           "legendFormat": "{{monitor_name}}",
           "refId": "A"
         }
@@ -391,7 +391,25 @@
     "wss"
   ],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": [
+            "Alles"
+          ],
+          "value": [
+            ".*"
+          ]
+        },
+        "includeAll": false,
+        "multi": false,
+        "name": "omgeving",
+        "options": [],
+        "query": "Alles : .*, TEST : test, PRD : prd",
+        "type": "custom"
+      }
+    ]
   },
   "time": {
     "from": "now-24h",
@@ -401,5 +419,5 @@
   "timezone": "browser",
   "title": "WSS Uptime (Kuma)",
   "uid": "wss-uptime",
-  "version": 6
+  "version": 7
 }
