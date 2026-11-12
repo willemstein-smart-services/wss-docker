@@ -3,7 +3,7 @@ FROM debian:trixie-slim
 LABEL org.opencontainers.image.title="WSS Webserver (PAC)"
 LABEL org.opencontainers.image.description="Debian Slim: Apache + mod_php + MariaDB, PAC/speeltuin voor willemste.in"
 LABEL org.opencontainers.image.source="https://github.com/willemstein-smart-services/wss-docker"
-LABEL org.opencontainers.image.version="1.0"
+LABEL org.opencontainers.image.version="1.0.1"
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Europe/Amsterdam

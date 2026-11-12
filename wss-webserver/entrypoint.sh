@@ -40,7 +40,9 @@ if [ ! -d /var/lib/mysql/mysql ]; then
   echo "Eerste boot: MariaDB initialiseren..."
   mariadb-install-db --user=mysql --datadir=/var/lib/mysql \
       --auth-root-authentication-method=socket > /dev/null
-  mysqld_safe --skip-networking &
+  # direct mariadbd i.p.v. mysqld_safe (compat-naam bestaat niet overal)
+  runuser -u mysql -- /usr/sbin/mariadbd --skip-networking \
+      --socket=/run/mysqld/mysqld.sock --datadir=/var/lib/mysql &
   for _ in $(seq 30); do
     mysqladmin ping > /dev/null 2>&1 && break
     sleep 1
