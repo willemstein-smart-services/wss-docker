@@ -399,14 +399,14 @@
             "Alles"
           ],
           "value": [
-            ".*"
+            ".+"
           ]
         },
         "includeAll": false,
         "multi": false,
         "name": "omgeving",
         "options": [],
-        "query": "Alles : .*, TEST : test, PRD : prd",
+        "query": "Alles : .+, TEST : test, PRD : prd",
         "type": "custom"
       }
     ]
@@ -419,5 +419,5 @@
   "timezone": "browser",
   "title": "WSS Uptime (Kuma)",
   "uid": "wss-uptime",
-  "version": 7
+  "version": 8
 }

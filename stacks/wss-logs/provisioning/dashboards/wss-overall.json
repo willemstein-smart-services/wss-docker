@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 5,
+  "version": 6,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -22,14 +22,14 @@
             "Alles"
           ],
           "value": [
-            ".*"
+            ".+"
           ]
         },
         "includeAll": false,
         "multi": false,
         "name": "omgeving",
         "options": [],
-        "query": "Alles : .*, TEST : test, PRD : prd",
+        "query": "Alles : .+, TEST : test, PRD : prd",
         "type": "custom"
       },
       {
