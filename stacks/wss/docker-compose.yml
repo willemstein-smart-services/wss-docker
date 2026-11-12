@@ -2,8 +2,8 @@
 # NAS: /volume1/docker/...  |  Netwerk: docker_network (external)
 services:
   devin:
-    image: ghcr.io/willemstein-smart-services/wss-devin:1.2.1
-    pull_policy: missing
+    image: ghcr.io/willemstein-smart-services/wss-devin:latest
+    pull_policy: always   # :latest is mutable -> altijd nieuwste pullen bij deploy
     container_name: devin
     hostname: devin
     restart: unless-stopped
@@ -54,7 +54,8 @@ services:
   # IP: 192.168.10.62
   # ==========================================
   wss-monitoring:
-    image: ghcr.io/willemstein-smart-services/wss-monitoring:1.0
+    image: ghcr.io/willemstein-smart-services/wss-monitoring:latest
+    pull_policy: always
     container_name: wss-monitoring
     hostname: wss-monitoring
     restart: unless-stopped

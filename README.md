@@ -33,4 +33,8 @@ docker login ghcr.io -u <user> -p <PAT read:packages>   # eenmalig
 docker pull ghcr.io/willemstein-smart-services/wss-devin:1.2
 ```
 Packages zijn private; zet eventueel op public via package → settings.
-Nooit `:latest` in compose gebruiken — pin altijd de versie-tag.
+
+## Tag-beleid
+- Elke build tagt `latest` + Dockerfile-versie + `sha-xxxx` (mutable tags)
+- Stack gebruikt `:latest` + `pull_policy: always` -> redeploy = nieuwste build
+- Wil je pinnen/rollback: zet `image: ...:<versie>` + `pull_policy: missing`
