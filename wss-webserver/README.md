@@ -12,11 +12,11 @@ Apache + `.htaccess`, PDO-MySQL, `mail()` (naar catcher, nooit echt versturen).
 ## Volumes
 | host | container | inhoud |
 |---|---|---|
-| `/volume1/docker/webserver/www` | `/var/www/html` | docroot (PAC-site) |
-| `/volume1/docker/webserver/mysql` | `/var/lib/mysql` | DB-data (persistent) |
-| `/volume1/docker/webserver/initdb` | `/docker-entrypoint-initdb.d` | `.sql`/`.sql.gz` → import bij EERSTE boot |
-| `/volume1/docker/webserver/logs` | `/var/log/webstack` | php-error.log + mail.log |
-| `/volume1/docker/webserver/cron.d` | `/etc/cron.d` | cronjobs (zelfde regels als wss-devin) |
+| `/volume1/docker/wss-webserver/www` | `/var/www/html` | docroot (PAC-site) |
+| `/volume1/docker/wss-webserver/mysql` | `/var/lib/mysql` | DB-data (persistent) |
+| `/volume1/docker/wss-webserver/initdb` | `/docker-entrypoint-initdb.d` | `.sql`/`.sql.gz` → import bij EERSTE boot |
+| `/volume1/docker/wss-webserver/logs` | `/var/log/webstack` | php-error.log + mail.log |
+| `/volume1/docker/wss-webserver/cron.d` | `/etc/cron.d` | cronjobs (zelfde regels als wss-devin) |
 
 Tip: je kunt de docroot ook direct op de test_env-checkout wijzen —
 `/volume1/docker/devin/home/workspace/www_willemste_in/public_html/test_env`
