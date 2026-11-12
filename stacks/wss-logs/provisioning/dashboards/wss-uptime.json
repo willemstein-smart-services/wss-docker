@@ -16,7 +16,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 16, "w": 24, "x": 0, "y": 0 },
+      "gridPos": { "h": 14, "w": 24, "x": 0, "y": 0 },
       "id": 1,
       "options": {
         "alignValue": "left",
@@ -32,43 +32,76 @@
     },
     {
       "datasource": { "type": "prometheus", "uid": "metrics" },
-      "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100, "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "orange", "value": 95 }, { "color": "green", "value": 99 } ] } }, "overrides": [] },
-      "gridPos": { "h": 14, "w": 24, "x": 0, "y": 16 },
-      "id": 2,
-      "options": {
-        "displayMode": "gradient",
-        "maxVizHeight": 300,
-        "minVizHeight": 16,
-        "namePlacement": "auto",
-        "orientation": "vertical",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-        "showUnfilled": true,
-        "sizing": "auto",
-        "text": { "titleSize": 11, "valueSize": 11 },
-        "valueMode": "color"
+      "fieldConfig": {
+        "defaults": { "custom": { "align": "left", "cellOptions": { "type": "auto" }, "filterable": false, "inspect": false } },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "Value" },
+            "properties": [
+              { "id": "unit", "value": "percent" },
+              { "id": "min", "value": 0 },
+              { "id": "max", "value": 100 },
+              { "id": "decimals", "value": 1 },
+              { "id": "custom.cellOptions", "value": { "type": "gauge" } },
+              { "id": "custom.width", "value": 220 },
+              { "id": "thresholds", "value": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "orange", "value": 95 }, { "color": "green", "value": 99 } ] } }
+            ]
+          }
+        ]
       },
-      "targets": [ { "datasource": { "type": "prometheus", "uid": "metrics" }, "expr": "100 * avg_over_time((monitor_status == bool 1)[$__range:])", "legendFormat": "{{monitor_name}}", "refId": "A" } ],
-      "title": "Uptime % (in gekozen periode)",
-      "type": "bargauge"
+      "gridPos": { "h": 14, "w": 24, "x": 0, "y": 14 },
+      "id": 2,
+      "options": { "cellHeight": "sm", "footer": { "show": false }, "showHeader": true, "sortBy": [ { "displayName": "Value", "desc": false } ] },
+      "pluginVersion": "11.0.0",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "metrics" },
+          "expr": "100 * avg_over_time((monitor_status == bool 1)[$__range:])",
+          "format": "table",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Uptime % (in gekozen periode) — slechtste bovenaan",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": { "Time": true, "job": true, "instance": true, "monitor_hostname": true, "monitor_port": true, "monitor_type": true, "monitor_url": true, "service_name": true, "src": true, "host": true },
+            "renameByName": { "monitor_name": "Monitor", "Value": "Uptime %" }
+          }
+        }
+      ],
+      "type": "table"
     },
     {
       "datasource": { "type": "prometheus", "uid": "metrics" },
       "fieldConfig": { "defaults": { "unit": "ms", "custom": { "drawStyle": "line", "fillOpacity": 10, "showPoints": "never" } }, "overrides": [] },
-      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 30 },
+      "gridPos": { "h": 9, "w": 12, "x": 0, "y": 28 },
       "id": 3,
-      "options": { "legend": { "calcs": ["lastNotNull", "max"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "none" } },
-      "targets": [ { "datasource": { "type": "prometheus", "uid": "metrics" }, "expr": "monitor_response_time", "legendFormat": "{{monitor_name}}", "refId": "A" } ],
-      "title": "Response time",
+      "options": { "legend": { "calcs": ["lastNotNull", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "none" } },
+      "targets": [ { "datasource": { "type": "prometheus", "uid": "metrics" }, "expr": "monitor_response_time > 1000", "legendFormat": "{{monitor_name}}", "refId": "A" } ],
+      "title": "Response time > 1s",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "metrics" },
+      "fieldConfig": { "defaults": { "unit": "ms", "custom": { "drawStyle": "line", "fillOpacity": 10, "showPoints": "never" } }, "overrides": [] },
+      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 28 },
+      "id": 4,
+      "options": { "legend": { "calcs": ["lastNotNull", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "none" } },
+      "targets": [ { "datasource": { "type": "prometheus", "uid": "metrics" }, "expr": "monitor_response_time <= 1000", "legendFormat": "{{monitor_name}}", "refId": "A" } ],
+      "title": "Response time <= 1s",
       "type": "timeseries"
     },
     {
       "datasource": { "type": "prometheus", "uid": "metrics" },
       "fieldConfig": { "defaults": { "unit": "d", "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "orange", "value": 14 }, { "color": "green", "value": 30 } ] } }, "overrides": [] },
-      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 40 },
-      "id": 4,
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 37 },
+      "id": 5,
       "options": {
         "displayMode": "basic",
-        "orientation": "vertical",
+        "orientation": "horizontal",
         "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
         "showUnfilled": true,
         "sizing": "auto",
@@ -88,5 +121,5 @@
   "timezone": "browser",
   "title": "WSS Uptime (Kuma)",
   "uid": "wss-uptime",
-  "version": 2
+  "version": 3
 }
