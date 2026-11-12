@@ -1,0 +1,74 @@
+# WSS stack — devin + draw.io + monitoring
+# NAS: /volume1/docker/...  |  Netwerk: docker_network (external)
+services:
+  devin:
+    image: ghcr.io/willemstein-smart-services/wss-devin:1.2
+    pull_policy: missing
+    container_name: devin
+    hostname: devin
+    restart: unless-stopped
+    environment:
+      TZ: Europe/Amsterdam
+      DEVIN_WEB_PASSWORD: "VERVANG_DOOR_STERK_WACHTWOORD"
+    volumes:
+      # Persistent home: Devin install, chats, ssh-keys, workspace
+      - /volume1/docker/devin/home:/home/devin
+      # WSS cron + logs (cron.d = volume, geen punt in bestandsnamen!)
+      - /volume1/docker/devin/home/cron.d:/etc/cron.d
+      - /volume1/docker/devin/home/logs:/var/log/wss
+      # Homarr project
+      - /volume1/docker/homarr:/home/devin/workspace/homarr
+      # Uptime Kuma
+      - /volume1/docker/wss_monitoring/uptime-kuma:/home/devin/workspace/uptime-kuma
+      # WSS Flows: draw.io docker
+      - /volume1/docker/wss_flows:/home/devin/workspace/wss_flows
+    working_dir: /home/devin/workspace
+    stdin_open: true
+    tty: true
+    # geen command: nodig — entrypoint start ttyd als devin op :7681
+    # (DEVIN_WEB_PASSWORD zet credential devin:<pw> + origin-check)
+    networks:
+      docker_network:
+        ipv4_address: 192.168.10.61
+
+  # ==========================================
+  # WSS FLOW - DRAW.IO
+  # IP: 192.168.10.63
+  # ==========================================
+  wss-flows:
+    image: jgraph/drawio:latest
+    container_name: wss-flows
+    hostname: wss-flows
+    restart: unless-stopped
+    environment:
+      TZ: Europe/Amsterdam
+      LETS_ENCRYPT_ENABLED: "false"
+    volumes:
+      - /volume1/docker/wss_flows:/data
+    networks:
+      docker_network:
+        ipv4_address: 192.168.10.63
+
+  # ==========================================
+  # WSS MONITORING - UPTIME KUMA
+  # IP: 192.168.10.62
+  # ==========================================
+  wss-monitoring:
+    image: ghcr.io/willemstein-smart-services/wss-monitoring:1.0
+    container_name: wss-monitoring
+    hostname: wss-monitoring
+    restart: unless-stopped
+    environment:
+      TZ: Europe/Amsterdam
+      MONITOR_WEB_PASSWORD: "VERVANG_DOOR_STERK_WACHTWOORD"
+    volumes:
+      - /volume1/docker/wss_monitoring:/home/monitor
+    stdin_open: true
+    tty: true
+    networks:
+      docker_network:
+        ipv4_address: 192.168.10.62
+
+networks:
+  docker_network:
+    external: true
