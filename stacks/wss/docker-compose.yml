@@ -24,6 +24,8 @@ services:
       - /volume1/docker/wss_flows:/home/devin/workspace/wss_flows
       # WSS webserver docroot (Devin kan hier bestanden droppen, bv. drawio)
       - /volume1/docker/wss-webserver/www:/home/devin/workspace/web_www
+      # WSS backups (lftp-mirror Hetzner + restic) via wss_backup.sh cron
+      - /volume1/docker/wss_crons_backups:/home/devin/backups
       # DB van wss-webserver bereikbaar via docker_network: wss-webserver:3306
     working_dir: /home/devin/workspace
     stdin_open: true
