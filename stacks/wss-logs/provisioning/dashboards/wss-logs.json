@@ -122,7 +122,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum by (container) (count_over_time({job=\"docker\"} |~ \"(?i)error|exception|fatal\" [$__range])) != \"scheduler_processor\" != \"context canceled\"",
+          "expr": "sum by (container) (count_over_time({job=\"docker\"} |~ \"(?i)error|exception|fatal\" [$__range])) != \"scheduler_processor\" != \"context canceled\" != \"entry too far behind\"",
           "legendFormat": "{{container}}",
           "queryType": "instant",
           "refId": "A"
@@ -333,5 +333,5 @@
   "timezone": "browser",
   "title": "Docker Logs Overzicht",
   "uid": "wss-logs-overview",
-  "version": 11
+  "version": 12
 }
