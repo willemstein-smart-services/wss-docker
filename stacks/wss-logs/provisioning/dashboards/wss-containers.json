@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 1,
+  "version": 2,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -138,7 +138,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum by (container) (count_over_time({job=\"docker\", container=~\"devin|wss-.*|homarr.*\"} |~ \"(?i)error|exception|fatal\"[$__range]))",
+          "expr": "sum by (container) (count_over_time({job=\"docker\", container=~\"devin|wss-.*|homarr.*\"} |~ \"(?i)error|exception|fatal\"[$__range])) != \"scheduler_processor\"",
           "refId": "A",
           "queryType": "instant",
           "legendFormat": "{{container}}"

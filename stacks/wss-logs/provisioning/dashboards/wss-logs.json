@@ -122,7 +122,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum by (container) (count_over_time({job=\"docker\"} |~ \"(?i)error|exception|fatal\" [$__range]))",
+          "expr": "sum by (container) (count_over_time({job=\"docker\"} |~ \"(?i)error|exception|fatal\" [$__range])) != \"scheduler_processor\"",
           "legendFormat": "{{container}}",
           "queryType": "instant",
           "refId": "A"
@@ -333,5 +333,5 @@
   "timezone": "browser",
   "title": "Docker Logs Overzicht",
   "uid": "wss-logs-overview",
-  "version": 9
+  "version": 10
 }
