@@ -1,0 +1,21 @@
+# Noise-patronen voor Docker error-kaarten (één regex-alternatie, !~ filter).
+# SOURCE OF TRUTH — staat in elke docker-error query als:
+#   !~ "level=info|level=debug|scheduler_processor|context canceled|entry too far behind"
+# Toevoegen = `|patroon` aan de alternatie toevoegen in ALLE error-exprs:
+#   provisioning/dashboards/wss-logs.json        (panels 6, 7)
+#   provisioning/dashboards/wss-containers.json  (panel 2)
+#   provisioning/dashboards/wss-overall.json     (panels 3, 7)
+# Regels:
+# - Alleen patronen uitsluiten die BEWEZEN ruis zijn (restart/query-cancel/duplicaat-push).
+# - NOOIT een heel container- of severity-niveau wegfilteren.
+# - Echte/onbekende errors blijven zichtbaar - die zijn juist het doel van de kaart.
+#
+# Actieve patronen:
+level=info            # info-regels met het woord "error" in de tekst
+level=debug           # idem voor debug
+scheduler_processor   # Loki shutdown-bursts (context canceled per worker)
+context canceled      # afgebroken Grafana/Loki queries
+entry too far behind  # Alloy duplicaat-pushes na restart/reload
+failed to tail file  # Alloy file-source bij restart/missende target
+empty ring           # Loki ingester-ring tijdens opstarten
+apis/quotas          # Grafana interne quota-API 5xx chatter

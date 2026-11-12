@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 8,
+  "version": 10,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -209,7 +209,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum(count_over_time({job=\"docker\", container=~\"devin|wss-.*|homarr.*\"} |~ \"(?i)error|exception|fatal\" != \"level=info\" != \"level=debug\"[$__range])) != \"scheduler_processor\" != \"context canceled\" != \"entry too far behind\"",
+          "expr": "sum(count_over_time({job=\"docker\", container=~\"devin|wss-.*|homarr.*\"} |~ \"(?i)error|exception|fatal\" !~ \"level=info|level=debug|scheduler_processor|context canceled|entry too far behind|failed to tail file|empty ring|apis/quotas\"[$__range]))",
           "refId": "A",
           "queryType": "instant"
         }
@@ -401,13 +401,13 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"docker\", container=~\"devin|wss-.*|homarr.*\"} |~ \"(?i)error|exception|fatal\" != \"level=info\" != \"level=debug\" != \"scheduler_processor\" != \"context canceled\" != \"entry too far behind\"",
+          "expr": "{job=\"docker\", container=~\"devin|wss-.*|homarr.*\"} |~ \"(?i)error|exception|fatal\" !~ \"level=info|level=debug|scheduler_processor|context canceled|entry too far behind|failed to tail file|empty ring|apis/quotas\"",
           "refId": "A",
           "queryType": "range"
         }
       ],
       "options": {
-        "dedupStrategy": "none",
+        "dedupStrategy": "numbers",
         "enableLogDetails": true,
         "showTime": true,
         "sortOrder": "Descending",
