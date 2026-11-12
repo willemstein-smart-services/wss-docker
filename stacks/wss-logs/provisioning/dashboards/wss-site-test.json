@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 1,
+  "version": 2,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -205,7 +205,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "count(count by (ip) (count_over_time({job=\"site-app\", env=\"test_env\"} | regexp \"\\d{8} \\d{2}:\\d{2}:\\d{2} - (?P<ip>\\S+)\"[$__range])))",
+          "expr": "count(count by (ip) (count_over_time({job=\"site-app\", env=\"test_env\"} | regexp `\\d{8} \\d{2}:\\d{2}:\\d{2} - (?P<ip>\\S+)`[$__range])))",
           "refId": "A",
           "queryType": "instant"
         }
@@ -322,7 +322,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "topk(20, sum by (event) (count_over_time({job=\"site-app\", env=\"test_env\"} | regexp \" - (?:alert|crit|err|warn|notice|info|debug - )?(?P<event>[A-Z_]+)\"[$__range])))",
+          "expr": "topk(20, sum by (event) (count_over_time({job=\"site-app\", env=\"test_env\"} | regexp ` - (?:alert|crit|err|warn|notice|info|debug - )?(?P<event>[A-Z0-9_]+)`[$__range])))",
           "refId": "A",
           "queryType": "instant"
         }
@@ -401,6 +401,122 @@
       }
     },
     {
+      "id": 8,
+      "type": "timeseries",
+      "title": "Volume per event-type",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 22
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "refId": "A",
+          "queryType": "range",
+          "expr": "topk(10, sum by (event) (count_over_time({job=\"site-app\", env=\"test_env\"} | regexp ` - (?:alert|crit|err|warn|notice|info|debug - )?(?P<event>[A-Z0-9_]+)`[$__interval])))"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 70,
+            "lineWidth": 1,
+            "stacking": {
+              "mode": "normal"
+            },
+            "showPoints": "never"
+          },
+          "unit": "none",
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": [
+            "sum"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "type": "timeseries",
+      "title": "Volume per src IP",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 22
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "refId": "A",
+          "queryType": "range",
+          "expr": "topk(10, sum by (ip) (count_over_time({job=\"site-app\", env=\"test_env\"} | regexp `\\d{8} \\d{2}:\\d{2}:\\d{2} - (?P<ip>\\S+)`[$__interval])))"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 70,
+            "lineWidth": 1,
+            "stacking": {
+              "mode": "normal"
+            },
+            "showPoints": "never"
+          },
+          "unit": "none",
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": [
+            "sum"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
       "id": 7,
       "type": "logs",
       "title": "Alle events",
@@ -412,7 +528,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 30
       },
       "targets": [
         {
