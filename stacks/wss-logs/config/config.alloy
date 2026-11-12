@@ -45,10 +45,9 @@ loki.source.file "wss_files" {
 		{ __path__ = "/logsrc/wss/*.log", job = "wss-cron" },
 		// wss-webserver: mail-catcher
 		{ __path__ = "/logsrc/webstack/mail.log", job = "mail-catcher" },
-		// site-app logs via de nachtelijke backup-mirror (dagvers;
-		// na een mirror-update kunnen regels opnieuw binnenkomen)
-		{ __path__ = "/logsrc/site/test_env/log/logging.php", job = "site-app", env = "test" },
-		{ __path__ = "/logsrc/site/full_site/log/logging.php", job = "site-app", env = "prod" },
+		// site-app logs komen via wss_log_pull.sh (devin-cron,
+		// 15-min pull -> Loki push API) — bewust géén file-tail
+		// op de backup-mirror: dat gaf dubbele regels.
 	]
 	forward_to = [loki.write.default.receiver]
 }

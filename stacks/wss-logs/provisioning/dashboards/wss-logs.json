@@ -8,7 +8,7 @@
     {
       "datasource": { "type": "loki", "uid": "loki" },
       "fieldConfig": { "defaults": {}, "overrides": [] },
-      "gridPos": { "h": 22, "w": 24, "x": 0, "y": 0 },
+      "gridPos": { "h": 12, "w": 24, "x": 0, "y": 0 },
       "id": 1,
       "options": {
         "dedupStrategy": "none",
@@ -23,21 +23,70 @@
       "targets": [
         {
           "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "{job=~\".+\"}",
+          "expr": "{job=\"docker\", container=~\"$container\"} |~ \"$zoek\"",
           "refId": "A"
         }
       ],
-      "title": "Alle WSS logs (filter: {job=\"docker\"}, {container=\"wss-webserver\"}, {job=\"site-app\"})",
+      "title": "WSS containers (docker logs)",
+      "type": "logs"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "loki" },
+      "fieldConfig": { "defaults": {}, "overrides": [] },
+      "gridPos": { "h": 12, "w": 24, "x": 0, "y": 12 },
+      "id": 2,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "{job=~\"site-app|wss-cron|mail-catcher\"} |~ \"$zoek\"",
+          "refId": "A"
+        }
+      ],
+      "title": "Site-app + cron + mail-catcher",
       "type": "logs"
     }
   ],
   "schemaVersion": 39,
   "tags": ["wss"],
-  "templating": { "list": [] },
+  "templating": {
+    "list": [
+      {
+        "current": { "selected": true, "text": ["All"], "value": ["$__all"] },
+        "datasource": { "type": "loki", "uid": "loki" },
+        "definition": "label_values({job=\"docker\"}, container)",
+        "includeAll": true,
+        "multi": true,
+        "name": "container",
+        "options": [],
+        "query": { "label": "container", "refId": "LokiVariableQueryEditor-VariableQuery", "stream": "", "type": 1 },
+        "refresh": 2,
+        "regex": "/devin|wss-.+|homarr.*/",
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": { "selected": false, "text": "", "value": "" },
+        "name": "zoek",
+        "options": [],
+        "query": "",
+        "type": "textbox"
+      }
+    ]
+  },
   "time": { "from": "now-6h", "to": "now" },
   "timepicker": {},
   "timezone": "browser",
   "title": "WSS Logs Overzicht",
   "uid": "wss-logs-overview",
-  "version": 1
+  "version": 2
 }

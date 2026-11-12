@@ -22,9 +22,12 @@ plakken, `GF_SECURITY_ADMIN_PASSWORD` invullen, deployen.
 
 ## Hoe het werkt
 
-- **Alloy** (.67) verzamelt: docker-logs via `docker.sock` (dekt ook
-  Apache-stdout van wss-webserver), `/var/log/wss/*.log`, de mail-
-  catcher, en de site-app-logs uit de backup-mirror.
+- **Alloy** (.67) verzamelt: docker-logs via `docker.sock` (ALLE
+  containers op de NAS), `/var/log/wss/*.log` en de mail-catcher.
+- **Site-app logs** (`{job="site-app", env="test|prod"}`) komen via
+  `wss_log_pull.sh` in de devin-container: elke 15 min read-only
+  SFTP-download van `log/logging.php`, alleen nieuwe regels worden
+  direct naar Loki's push-API gestuurd (met originele timestamps).
 - **Loki** (.66) bewaart 90 dagen op `/volume1/docker/wss-grafana/loki`.
 - **Grafana** (.65) laadt datasource + dashboard automatisch via
   `provisioning/` — staat in deze repo, wijzigingen via git.
@@ -37,9 +40,16 @@ Wijzigen = aanpassen in git + de betreffende container restarten in
 Portainer. Dashboards in de UI bewerken wordt overschreven bij
 herprovision — pas het JSON aan via git (of exporteer en commit).
 
-## Fase 2 (later)
+## Fase 2 (gedaan)
 
-15-min lftp-pull van online log-dirs naar `/volume1/docker/wss-logs`
-+ extra volume-regel in de devin-stack → actuelere site-logs zonder
-de nachtelijke mirror af te wachten. Daarna evt. Prometheus +
-Uptime-Kuma-exporter voor metrics.
+`wss_log_pull.sh` (devin-cron `wss-logs-pull`, `*/15 * * * *`):
+lftp `get` van `test_env/log/logging.php` + `full_site/log/logging.php`
+-> `bin/loki_push_log.py` pusht alleen nieuwe regels naar Loki
+(state in `workspace/.devin/state/logpull-*.pos`). Geen volumes of
+redeploys nodig; `reject_old_samples_max_age` in loki-config staat
+op 90d zodat historische regels ook binnenkunnen.
+
+## Later (fase 3, metrics)
+
+Evt. Prometheus/VictoriaMetrics + Uptime-Kuma-exporter, Synology
+SNMP, MariaDB-exporter -> Grafana-dashboards met metrics naast logs.

@@ -30,7 +30,8 @@ schema_config:
         period: 24h
 
 limits_config:
-  retention_period: 2160h   # 90 dagen
+  retention_period: 2160h        # 90 dagen
+  reject_old_samples_max_age: 2160h  # site-logs mogen ook historisch binnenkomen
   allow_structured_metadata: true
   volume_enabled: true
 
