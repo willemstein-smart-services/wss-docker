@@ -1,0 +1,82 @@
+# ============================================================
+# WSS LOGS — Grafana + Loki + Alloy
+#
+# Grafana : http://192.168.10.65:3000  (admin / env-wachtwoord)
+# Loki    : intern, http://wss-loki:3100
+# Alloy   : http://192.168.10.67:12345 (collector-UI)
+#
+# Bronnen fase 1:
+#   - docker-logs van ALLE containers (via docker.sock, o.a.
+#     Apache access/error van wss-webserver -> stdout)
+#   - /var/log/wss/*.log  (devin-cron: backup.log, intake.log...)
+#   - /var/log/webstack/mail.log (wss-webserver mail-catcher)
+#   - site-app logs via de 03:00-backup-mirror
+#     (test_env+full_site log/logging.php; dagvers, kan na een
+#     mirror-update duplicate regels geven)
+#
+# NAS-dirs (eenmalig aanmaken):
+#   /volume1/docker/wss-grafana/{grafana,loki,alloy}  (chmod 777
+#   of chown op resp. 472 / 10001 / root)
+# Config + provisioning staan in deze repo-checkout — die ligt
+# via het devin-home-volume al op de NAS.
+# ============================================================
+
+services:
+
+  grafana:
+    image: grafana/grafana:latest
+    pull_policy: always
+    container_name: wss-grafana
+    hostname: wss-grafana
+    restart: unless-stopped
+    environment:
+      TZ: Europe/Amsterdam
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: "VERVANG_DOOR_STERK_WACHTWOORD"
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+    volumes:
+      - /volume1/docker/wss-grafana/grafana:/var/lib/grafana
+      - /volume1/docker/devin/home/workspace/wss-docker/stacks/wss-logs/provisioning:/etc/grafana/provisioning:ro
+    networks:
+      docker_network:
+        ipv4_address: 192.168.10.65
+
+  loki:
+    image: grafana/loki:latest
+    pull_policy: always
+    container_name: wss-loki
+    hostname: wss-loki
+    restart: unless-stopped
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - /volume1/docker/wss-grafana/loki:/loki
+      - /volume1/docker/devin/home/workspace/wss-docker/stacks/wss-logs/config/loki-config.yaml:/etc/loki/local-config.yaml:ro
+    networks:
+      docker_network:
+        ipv4_address: 192.168.10.66
+
+  alloy:
+    image: grafana/alloy:latest
+    pull_policy: always
+    container_name: wss-alloy
+    hostname: wss-alloy
+    restart: unless-stopped
+    user: "0"
+    command: run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy /etc/alloy/config.alloy
+    volumes:
+      - /volume1/docker/wss-grafana/alloy:/var/lib/alloy
+      - /volume1/docker/devin/home/workspace/wss-docker/stacks/wss-logs/config/config.alloy:/etc/alloy/config.alloy:ro
+      # alle container-stdout/-stderr (incl. Apache van wss-webserver)
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # bestandslogs op de NAS (allemaal read-only!)
+      - /volume1/docker/devin/home/logs:/logsrc/wss:ro
+      - /volume1/docker/wss-webserver/logs:/logsrc/webstack:ro
+      - /volume1/docker/wss_crons_backups/hetzner/root:/logsrc/site:ro
+    networks:
+      docker_network:
+        ipv4_address: 192.168.10.67
+
+networks:
+  docker_network:
+    external: true

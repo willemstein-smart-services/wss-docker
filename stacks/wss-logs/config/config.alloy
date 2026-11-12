@@ -1,0 +1,54 @@
+// Grafana Alloy — log-collector voor de WSS-stack.
+// Alles gaat naar Loki op wss-loki:3100.
+
+loki.write "default" {
+	endpoint {
+		url = "http://wss-loki:3100/loki/api/v1/push"
+	}
+	external_labels = {
+		host = "wss-nas",
+	}
+}
+
+// ---------------------------------------------------------------
+// 1) Docker-container logs (stdout/stderr van alle containers)
+//    dekt o.a. Apache access/error van wss-webserver.
+// ---------------------------------------------------------------
+discovery.docker "containers" {
+	host = "unix:///var/run/docker.sock"
+}
+
+discovery.relabel "containers" {
+	targets = discovery.docker.containers.targets
+
+	rule {
+		source_labels = ["__meta_docker_container_name"]
+		regex         = "/(.*)"
+		target_label  = "container"
+	}
+}
+
+loki.source.docker "containers" {
+	host          = "unix:///var/run/docker.sock"
+	targets       = discovery.relabel.containers.output
+	forward_to    = [loki.write.default.receiver]
+	labels        = { job = "docker" }
+	relabel_rules = discovery.relabel.containers.rules
+}
+
+// ---------------------------------------------------------------
+// 2) Bestandslogs op de NAS (alle mounts read-only)
+// ---------------------------------------------------------------
+loki.source.file "wss_files" {
+	targets = [
+		// devin-cron output: backup.log, intake.log, ...
+		{ __path__ = "/logsrc/wss/*.log", job = "wss-cron" },
+		// wss-webserver: mail-catcher
+		{ __path__ = "/logsrc/webstack/mail.log", job = "mail-catcher" },
+		// site-app logs via de nachtelijke backup-mirror (dagvers;
+		// na een mirror-update kunnen regels opnieuw binnenkomen)
+		{ __path__ = "/logsrc/site/test_env/log/logging.php", job = "site-app", env = "test" },
+		{ __path__ = "/logsrc/site/full_site/log/logging.php", job = "site-app", env = "prod" },
+	]
+	forward_to = [loki.write.default.receiver]
+}
