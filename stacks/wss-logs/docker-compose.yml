@@ -56,6 +56,22 @@ services:
       docker_network:
         ipv4_address: 192.168.10.66
 
+  metrics:
+    image: victoriametrics/victoria-metrics:latest
+    pull_policy: always
+    container_name: wss-metrics
+    hostname: wss-metrics
+    restart: unless-stopped
+    command: >
+      -retentionPeriod=90d
+      -storageDataPath=/storage
+      -httpListenAddr=:8428
+    volumes:
+      - /volume1/docker/wss-metrics:/storage
+    networks:
+      docker_network:
+        ipv4_address: 192.168.10.68
+
   alloy:
     image: grafana/alloy:latest
     pull_policy: always
@@ -63,6 +79,9 @@ services:
     hostname: wss-alloy
     restart: unless-stopped
     user: "0"
+    environment:
+      # Uptime Kuma API-key voor /metrics scrape (read-only)
+      KUMA_API_KEY: "uk1_gjWLGlkvl189Xxp8kKXJULG6Erf1PrLx1gLnv1gp"
     command: run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy /etc/alloy/config.alloy
     volumes:
       - /volume1/docker/wss-grafana/alloy:/var/lib/alloy

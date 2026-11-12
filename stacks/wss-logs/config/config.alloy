@@ -51,3 +51,26 @@ loki.source.file "wss_files" {
 	]
 	forward_to = [loki.write.default.receiver]
 }
+
+// ---------------------------------------------------------------
+// 3) Metrics: Uptime Kuma /metrics -> VictoriaMetrics
+//    API-key via KUMA_API_KEY env (basic-auth password).
+// ---------------------------------------------------------------
+prometheus.scrape "kuma" {
+	targets         = [{ __address__ = "wss-monitoring:3001" }]
+	metrics_path    = "/metrics"
+	scrape_interval = "30s"
+
+	basic_auth {
+		username = ""
+		password = env("KUMA_API_KEY")
+	}
+
+	forward_to = [prometheus.remote_write.default.receiver]
+}
+
+prometheus.remote_write "default" {
+	endpoint {
+		url = "http://wss-metrics:8428/api/v1/write"
+	}
+}
