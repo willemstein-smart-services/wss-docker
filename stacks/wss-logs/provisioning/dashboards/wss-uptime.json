@@ -12,33 +12,49 @@
           "mappings": [
             { "type": "value", "options": { "0": { "text": "DOWN", "color": "red" }, "1": { "text": "UP", "color": "green" }, "2": { "text": "PENDING", "color": "yellow" }, "3": { "text": "MAINT", "color": "purple" } } }
           ],
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] }
+          "custom": { "fillOpacity": 80, "lineWidth": 0, "spanNulls": false }
         },
         "overrides": []
       },
-      "gridPos": { "h": 6, "w": 24, "x": 0, "y": 0 },
+      "gridPos": { "h": 16, "w": 24, "x": 0, "y": 0 },
       "id": 1,
-      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "auto", "orientation": "horizontal", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "showPercentChange": false, "textMode": "value_and_name", "wideLayout": true },
-      "pluginVersion": "11.0.0",
-      "targets": [ { "datasource": { "type": "prometheus", "uid": "metrics" }, "expr": "monitor_status", "refId": "A" } ],
-      "title": "Monitor status (Kuma)",
-      "type": "stat"
+      "options": {
+        "alignValue": "left",
+        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": false },
+        "mergeValues": false,
+        "rowHeight": 0.8,
+        "showValue": "never",
+        "tooltip": { "mode": "single", "sort": "none" }
+      },
+      "targets": [ { "datasource": { "type": "prometheus", "uid": "metrics" }, "expr": "monitor_status", "legendFormat": "{{monitor_name}}", "refId": "A" } ],
+      "title": "Status over tijd (Kuma)",
+      "type": "state-timeline"
     },
     {
       "datasource": { "type": "prometheus", "uid": "metrics" },
       "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100, "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "orange", "value": 95 }, { "color": "green", "value": 99 } ] } }, "overrides": [] },
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 6 },
+      "gridPos": { "h": 14, "w": 24, "x": 0, "y": 16 },
       "id": 2,
-      "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "horizontal", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "value_and_name" },
-      "pluginVersion": "11.0.0",
-      "targets": [ { "datasource": { "type": "prometheus", "uid": "metrics" }, "expr": "100 * avg_over_time((monitor_status == 1)[$__range:1m])", "refId": "A" } ],
+      "options": {
+        "displayMode": "gradient",
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "namePlacement": "auto",
+        "orientation": "vertical",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "text": { "titleSize": 11, "valueSize": 11 },
+        "valueMode": "color"
+      },
+      "targets": [ { "datasource": { "type": "prometheus", "uid": "metrics" }, "expr": "100 * avg_over_time((monitor_status == bool 1)[$__range:])", "legendFormat": "{{monitor_name}}", "refId": "A" } ],
       "title": "Uptime % (in gekozen periode)",
-      "type": "stat"
+      "type": "bargauge"
     },
     {
       "datasource": { "type": "prometheus", "uid": "metrics" },
       "fieldConfig": { "defaults": { "unit": "ms", "custom": { "drawStyle": "line", "fillOpacity": 10, "showPoints": "never" } }, "overrides": [] },
-      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 14 },
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 30 },
       "id": 3,
       "options": { "legend": { "calcs": ["lastNotNull", "max"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "none" } },
       "targets": [ { "datasource": { "type": "prometheus", "uid": "metrics" }, "expr": "monitor_response_time", "legendFormat": "{{monitor_name}}", "refId": "A" } ],
@@ -48,13 +64,20 @@
     {
       "datasource": { "type": "prometheus", "uid": "metrics" },
       "fieldConfig": { "defaults": { "unit": "d", "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "orange", "value": 14 }, { "color": "green", "value": 30 } ] } }, "overrides": [] },
-      "gridPos": { "h": 6, "w": 24, "x": 0, "y": 23 },
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 40 },
       "id": 4,
-      "options": { "colorMode": "value", "graphMode": "none", "justifyMode": "auto", "orientation": "horizontal", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "value_and_name" },
-      "pluginVersion": "11.0.0",
-      "targets": [ { "datasource": { "type": "prometheus", "uid": "metrics" }, "expr": "monitor_cert_days_remaining", "refId": "A" } ],
+      "options": {
+        "displayMode": "basic",
+        "orientation": "vertical",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "text": { "titleSize": 11, "valueSize": 11 },
+        "valueMode": "color"
+      },
+      "targets": [ { "datasource": { "type": "prometheus", "uid": "metrics" }, "expr": "monitor_cert_days_remaining", "legendFormat": "{{monitor_name}}", "refId": "A" } ],
       "title": "Certificaat dagen resterend",
-      "type": "stat"
+      "type": "bargauge"
     }
   ],
   "schemaVersion": 39,
@@ -65,5 +88,5 @@
   "timezone": "browser",
   "title": "WSS Uptime (Kuma)",
   "uid": "wss-uptime",
-  "version": 1
+  "version": 2
 }
