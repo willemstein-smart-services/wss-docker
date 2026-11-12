@@ -14,6 +14,9 @@ DOTDIR="$WS/.devin/dotfiles"
 # /etc/cron.d is een volume (NAS: .../wss_devin/cron.d). Cron eist:
 # root-owned, niet group/world-writable, GEEN punt/tilde in de bestandsnaam.
 if [ -d /etc/cron.d ]; then
+  # dir zelf ook: cron negeert cron.d als hij group/world-writable of niet root-owned is
+  chown root:root /etc/cron.d 2>/dev/null || true
+  chmod 0755 /etc/cron.d 2>/dev/null || true
   for f in /etc/cron.d/*; do
     [ -f "$f" ] || continue
     case "$(basename "$f")" in

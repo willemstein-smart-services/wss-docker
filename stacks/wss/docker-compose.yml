@@ -2,7 +2,7 @@
 # NAS: /volume1/docker/...  |  Netwerk: docker_network (external)
 services:
   devin:
-    image: ghcr.io/willemstein-smart-services/wss-devin:1.2
+    image: ghcr.io/willemstein-smart-services/wss-devin:1.2.1
     pull_policy: missing
     container_name: devin
     hostname: devin

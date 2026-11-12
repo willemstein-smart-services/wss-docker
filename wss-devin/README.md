@@ -20,7 +20,9 @@ Regels (cron weigert/ignoreert anders):
   ```
   */15 * * * * devin /home/devin/workspace/bin/intake_poller.sh >> /var/log/wss/intake.log 2>&1
   ```
-- Perms worden bij boot gefixt (root:root 0644) — hoef je op NAS niet te regelen
+- Perms (dir én files) worden bij boot gefixt — hoef je op NAS niet te regelen
+- Jobs draaien in container-TZ (Europe/Amsterdam, /etc/localtime sinds 1.2.1);
+  `%` in een command escapen als `\%` of in een script stoppen
 - Container-env is NIET zichtbaar in jobs: gebruik `. /etc/container.env`
   in je script, of `VAR=value`-regels bovenin het cron.d-bestand
 - Geen syslog: redirect output naar `/var/log/wss/` (logs-volume) —
@@ -38,7 +40,7 @@ Alles daarin wordt bij boot in `~devin` gelinkt (echte dot-namen gebruiken):
 ## Compose
 ```yaml
 wss-devin:
-  image: ghcr.io/willemstein-smart-services/wss-devin:1.2
+  image: ghcr.io/willemstein-smart-services/wss-devin:1.2.1
   container_name: wss-devin
   hostname: wss-devin
   restart: unless-stopped

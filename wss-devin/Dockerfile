@@ -3,7 +3,7 @@ FROM debian:trixie-slim
 LABEL org.opencontainers.image.title="WSS Devin Linux"
 LABEL org.opencontainers.image.description="Debian Slim: dev-tools, ttyd webterminal, cron"
 LABEL org.opencontainers.image.source="https://github.com/willemstein-smart-services/wss-docker"
-LABEL org.opencontainers.image.version="1.2"
+LABEL org.opencontainers.image.version="1.2.1"
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Europe/Amsterdam
@@ -54,7 +54,9 @@ RUN apt-get update && \
       fd-find \
       fzf \
       bat && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    ln -sf "/usr/share/zoneinfo/${TZ}" /etc/localtime && \
+    echo "${TZ}" > /etc/timezone
 
 # Debian noemt de binaries batcat/fdfind -> verwachte namen linken
 RUN ln -sf /usr/bin/batcat /usr/local/bin/bat && \
