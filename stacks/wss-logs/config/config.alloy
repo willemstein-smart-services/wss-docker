@@ -42,9 +42,9 @@ loki.source.docker "containers" {
 loki.source.file "wss_files" {
 	targets = [
 		// devin-cron output: backup.log, intake.log, ...
-		{ __path__ = "/logsrc/wss/*.log", job = "wss-cron" },
+		{ __path__ = "/logsrc/wss/*.log", job = "wss-cron", level = "info" },
 		// wss-webserver: mail-catcher
-		{ __path__ = "/logsrc/webstack/mail.log", job = "mail-catcher" },
+		{ __path__ = "/logsrc/webstack/mail.log", job = "mail-catcher", level = "info" },
 		// site-app logs komen via wss_log_pull.sh (devin-cron,
 		// 15-min pull -> Loki push API) — bewust géén file-tail
 		// op de backup-mirror: dat gaf dubbele regels.

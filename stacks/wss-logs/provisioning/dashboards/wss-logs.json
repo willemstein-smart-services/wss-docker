@@ -300,7 +300,7 @@
           "uid": "loki"
         },
         "includeAll": true,
-        "allValue": ".*",
+        "allValue": ".+",
         "multi": true,
         "name": "level",
         "options": [],
@@ -333,5 +333,5 @@
   "timezone": "browser",
   "title": "WSS Logs Overzicht",
   "uid": "wss-logs-overview",
-  "version": 6
+  "version": 7
 }
