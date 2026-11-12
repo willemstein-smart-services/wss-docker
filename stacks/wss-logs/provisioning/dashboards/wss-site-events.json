@@ -1,13 +1,13 @@
 {
-  "title": "WSS Site Events — test_env",
-  "uid": "wss-site-test",
+  "title": "WSS Site Events",
+  "uid": "wss-site-events",
   "tags": [
     "wss",
     "site-app"
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 3,
+  "version": 4,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -15,6 +15,32 @@
   },
   "templating": {
     "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": [
+            "test_env"
+          ],
+          "value": [
+            "test_env"
+          ]
+        },
+        "datasource": {
+          "type": "loki",
+          "uid": "loki"
+        },
+        "includeAll": false,
+        "multi": false,
+        "name": "env",
+        "options": [],
+        "refresh": 2,
+        "type": "query",
+        "query": {
+          "label": "env",
+          "stream": "{job=\"site-app\"}",
+          "type": 1
+        }
+      },
       {
         "current": {
           "selected": true,
@@ -38,7 +64,7 @@
         "type": "query",
         "query": {
           "label": "level",
-          "stream": "{job=\"site-app\", env=\"test_env\"}",
+          "stream": "{job=\"site-app\", env=\"$env\"}",
           "type": 1
         }
       },
@@ -79,7 +105,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum(count_over_time({job=\"site-app\", env=\"test_env\"}[$__range]))",
+          "expr": "sum(count_over_time({job=\"site-app\", env=\"$env\"}[$__range]))",
           "refId": "A",
           "queryType": "instant"
         }
@@ -138,7 +164,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum(count_over_time({job=\"site-app\", env=\"test_env\", level=~\"err|crit|alert\"}[$__range]))",
+          "expr": "sum(count_over_time({job=\"site-app\", env=\"$env\", level=~\"err|crit|alert\"}[$__range]))",
           "refId": "A",
           "queryType": "instant"
         }
@@ -205,7 +231,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "count(count by (ip) (count_over_time({job=\"site-app\", env=\"test_env\"} | regexp `\\d{8} \\d{2}:\\d{2}:\\d{2} - (?P<ip>\\S+)`[$__range])))",
+          "expr": "count(count by (ip) (count_over_time({job=\"site-app\", env=\"$env\"} | regexp `\\d{8} \\d{2}:\\d{2}:\\d{2} - (?P<ip>\\S+)`[$__range])))",
           "refId": "A",
           "queryType": "instant"
         }
@@ -264,7 +290,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum by (level) (count_over_time({job=\"site-app\", env=\"test_env\"}[$__interval]))",
+          "expr": "sum by (level) (count_over_time({job=\"site-app\", env=\"$env\"}[$__interval]))",
           "refId": "A",
           "queryType": "range",
           "legendFormat": "{{level}}"
@@ -323,7 +349,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "topk(20, sum by (event) (count_over_time({job=\"site-app\", env=\"test_env\"} | regexp ` - (?:alert|crit|err|warn|notice|info|debug - )?(?P<event>[A-Z0-9_]+)`[$__range])))",
+          "expr": "topk(20, sum by (event) (count_over_time({job=\"site-app\", env=\"$env\"} | regexp `\\d{8} \\d{2}:\\d{2}:\\d{2} - \\S+ - (?:(?:alert|crit|err|warn|notice|info|debug) - )?(?P<event>[A-Z0-9_]+)`[$__range])))",
           "refId": "A",
           "queryType": "instant",
           "legendFormat": "{{event}}"
@@ -386,7 +412,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"site-app\", env=\"test_env\", level=~\"err|crit|alert\"} |~ \"$zoek\"",
+          "expr": "{job=\"site-app\", env=\"$env\", level=~\"err|crit|alert\"} |~ \"$zoek\"",
           "refId": "A",
           "queryType": "range"
         }
@@ -424,7 +450,7 @@
           },
           "refId": "A",
           "queryType": "range",
-          "expr": "topk(10, sum by (event) (count_over_time({job=\"site-app\", env=\"test_env\"} | regexp ` - (?:alert|crit|err|warn|notice|info|debug - )?(?P<event>[A-Z0-9_]+)`[$__interval])))",
+          "expr": "topk(10, sum by (event) (count_over_time({job=\"site-app\", env=\"$env\"} | regexp `\\d{8} \\d{2}:\\d{2}:\\d{2} - \\S+ - (?:(?:alert|crit|err|warn|notice|info|debug) - )?(?P<event>[A-Z0-9_]+)`[$__interval])))",
           "legendFormat": "{{event}}"
         }
       ],
@@ -483,7 +509,7 @@
           },
           "refId": "A",
           "queryType": "range",
-          "expr": "topk(10, sum by (ip) (count_over_time({job=\"site-app\", env=\"test_env\"} | regexp `\\d{8} \\d{2}:\\d{2}:\\d{2} - (?P<ip>\\S+)`[$__interval])))",
+          "expr": "topk(10, sum by (ip) (count_over_time({job=\"site-app\", env=\"$env\"} | regexp `\\d{8} \\d{2}:\\d{2}:\\d{2} - (?P<ip>\\S+)`[$__interval])))",
           "legendFormat": "{{ip}}"
         }
       ],
@@ -540,7 +566,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"site-app\", env=\"test_env\", level=~\"$level\"} |~ \"$zoek\"",
+          "expr": "{job=\"site-app\", env=\"$env\", level=~\"$level\"} |~ \"$zoek\"",
           "refId": "A",
           "queryType": "range"
         }
