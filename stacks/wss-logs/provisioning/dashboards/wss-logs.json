@@ -333,5 +333,5 @@
   "timezone": "browser",
   "title": "Docker Logs Overzicht",
   "uid": "wss-logs-overview",
-  "version": 8
+  "version": 9
 }
