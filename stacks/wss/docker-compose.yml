@@ -48,6 +48,9 @@ services:
     environment:
       TZ: Europe/Amsterdam
       LETS_ENCRYPT_ENABLED: "false"
+      # proxy-servlet aan: #U-remote-files (WSS.drawio op wss-webserver)
+      # worden dan server-side opgehaald (lost CORS + mixed-content op)
+      ENABLE_DRAWIO_PROXY: "1"
     volumes:
       - /volume1/docker/wss_flows:/data
     networks:
