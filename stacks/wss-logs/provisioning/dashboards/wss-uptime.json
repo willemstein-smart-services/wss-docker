@@ -262,8 +262,9 @@
           "refId": "A"
         }
       ],
-      "title": "Response time > 1s",
-      "type": "timeseries"
+      "title": "Response time > 1s  (vaste range: 14d — dagelijkse checks)",
+      "type": "timeseries",
+      "timeFrom": "14d"
     },
     {
       "datasource": {
@@ -400,5 +401,5 @@
   "timezone": "browser",
   "title": "WSS Uptime (Kuma)",
   "uid": "wss-uptime",
-  "version": 5
+  "version": 6
 }
