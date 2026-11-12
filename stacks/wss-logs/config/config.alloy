@@ -69,27 +69,27 @@ prometheus.scrape "kuma" {
 	forward_to = [prometheus.relabel.kuma_env.receiver]
 }
 
-// wss_env-label op Kuma-metrics: 'test' als monitor-naam of -url
-// 'test' bevat (example-test, /test_env/, Backend - TEST,
-// example-test.willemste.in, ...), anders 'prd'.
+// wss_env-label op Kuma-metrics, zelfde waarden als de site-app
+// env-labels: 'test_env' als monitor-naam of -url 'test' bevat
+// (example-test, /test_env/, Backend - TEST, ...), anders 'full_site'.
 prometheus.relabel "kuma_env" {
 	forward_to = [prometheus.remote_write.default.receiver]
 
 	rule {
 		target_label = "wss_env"
-		replacement  = "prd"
+		replacement  = "full_site"
 	}
 	rule {
 		source_labels = ["monitor_name"]
 		regex         = "(?i).*test.*"
 		target_label  = "wss_env"
-		replacement   = "test"
+		replacement   = "test_env"
 	}
 	rule {
 		source_labels = ["monitor_url"]
 		regex         = "(?i).*test.*"
 		target_label  = "wss_env"
-		replacement   = "test"
+		replacement   = "test_env"
 	}
 }
 

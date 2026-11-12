@@ -73,7 +73,7 @@
             "type": "prometheus",
             "uid": "metrics"
           },
-          "expr": "monitor_status{wss_env=~\"$omgeving\"}",
+          "expr": "monitor_status{wss_env=~\"$env\"}",
           "legendFormat": "{{monitor_name}}",
           "refId": "A"
         }
@@ -181,7 +181,7 @@
             "type": "prometheus",
             "uid": "metrics"
           },
-          "expr": "100 * avg_over_time((monitor_status{wss_env=~\"$omgeving\"} == bool 1)[$__range:])",
+          "expr": "100 * avg_over_time((monitor_status{wss_env=~\"$env\"} == bool 1)[$__range:])",
           "format": "table",
           "instant": true,
           "refId": "A"
@@ -257,7 +257,7 @@
             "type": "prometheus",
             "uid": "metrics"
           },
-          "expr": "monitor_response_time{wss_env=~\"$omgeving\"} > 1000",
+          "expr": "monitor_response_time{wss_env=~\"$env\"} > 1000",
           "legendFormat": "{{monitor_name}}",
           "refId": "A"
         }
@@ -310,7 +310,7 @@
             "type": "prometheus",
             "uid": "metrics"
           },
-          "expr": "monitor_response_time{wss_env=~\"$omgeving\"} <= 1000",
+          "expr": "monitor_response_time{wss_env=~\"$env\"} <= 1000",
           "legendFormat": "{{monitor_name}}",
           "refId": "A"
         }
@@ -377,7 +377,7 @@
             "type": "prometheus",
             "uid": "metrics"
           },
-          "expr": "monitor_cert_days_remaining{wss_env=~\"$omgeving\"}",
+          "expr": "monitor_cert_days_remaining{wss_env=~\"$env\"}",
           "legendFormat": "{{monitor_name}}",
           "refId": "A"
         }
@@ -394,20 +394,30 @@
     "list": [
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": [
-            "Alles"
+            "All"
           ],
           "value": [
-            ".+"
+            "$__all"
           ]
         },
-        "includeAll": false,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "metrics"
+        },
+        "includeAll": true,
+        "allValue": ".+",
         "multi": false,
-        "name": "omgeving",
+        "name": "env",
         "options": [],
-        "query": "Alles : .+, TEST : test, PRD : prd",
-        "type": "custom"
+        "refresh": 2,
+        "type": "query",
+        "query": {
+          "label": "wss_env",
+          "stream": "monitor_status",
+          "type": 1
+        }
       }
     ]
   },
@@ -419,5 +429,5 @@
   "timezone": "browser",
   "title": "WSS Uptime (Kuma)",
   "uid": "wss-uptime",
-  "version": 8
+  "version": 9
 }

@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 6,
+  "version": 7,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -15,23 +15,6 @@
   },
   "templating": {
     "list": [
-      {
-        "current": {
-          "selected": false,
-          "text": [
-            "Alles"
-          ],
-          "value": [
-            ".+"
-          ]
-        },
-        "includeAll": false,
-        "multi": false,
-        "name": "omgeving",
-        "options": [],
-        "query": "Alles : .+, TEST : test, PRD : prd",
-        "type": "custom"
-      },
       {
         "current": {
           "selected": false,
@@ -96,7 +79,7 @@
             "type": "prometheus",
             "uid": "metrics"
           },
-          "expr": "count(monitor_status{wss_env=~\"$omgeving\"} == 0) or vector(0)",
+          "expr": "count(monitor_status{wss_env=~\"$env\"} == 0) or vector(0)",
           "refId": "A",
           "queryType": "instant"
         }
