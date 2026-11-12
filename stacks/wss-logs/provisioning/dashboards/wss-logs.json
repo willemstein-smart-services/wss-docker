@@ -202,7 +202,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"docker\", container=~\"$container\"} |~ \"$zoek\"",
+          "expr": "{job=\"docker\", container=~\"$container\"} |~ \"(?i)(${level:regex})\" |~ \"$zoek\"",
           "refId": "A"
         }
       ],
@@ -241,7 +241,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=~\"site-app|wss-cron|mail-catcher\"} |~ \"$zoek\"",
+          "expr": "{job=~\"site-app|wss-cron|mail-catcher\"} |~ \"(?i)(${level:regex})\" |~ \"$zoek\"",
           "refId": "A"
         }
       ],
@@ -287,6 +287,24 @@
       },
       {
         "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": true,
+        "name": "level",
+        "options": [],
+        "query": "error, warn, info, debug",
+        "type": "custom"
+      },
+      {
+        "current": {
           "selected": false,
           "text": "",
           "value": ""
@@ -306,5 +324,5 @@
   "timezone": "browser",
   "title": "WSS Logs Overzicht",
   "uid": "wss-logs-overview",
-  "version": 4
+  "version": 5
 }
