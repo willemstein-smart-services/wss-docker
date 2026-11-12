@@ -39,16 +39,30 @@ loki.source.docker "containers" {
 // ---------------------------------------------------------------
 // 2) Bestandslogs op de NAS (alle mounts read-only)
 // ---------------------------------------------------------------
+// local.file_match expandeert globs naar echte bestanden — loki.source.file
+// doet dat NIET zelf (een letterlijke "*.log" in __path__ faalt op stat).
+// Bonus: targets verschijnen pas als het bestand bestaat -> geen
+// "failed to tail file"-fouten meer voor nog-niet-bestaande logs.
+local.file_match "wss_cron_logs" {
+	// devin-cron output: backup.log, logpull.log, noise-review.log, ...
+	path_targets = [{__path__ = "/logsrc/wss/*.log", job = "wss-cron", level = "info"}]
+	sync_period  = "15s"
+}
+
+local.file_match "webstack_logs" {
+	// wss-webserver: mail-catcher (file bestaat pas zodra mail valt)
+	path_targets = [{__path__ = "/logsrc/webstack/*.log", job = "mail-catcher", level = "info"}]
+	sync_period  = "15s"
+}
+
 loki.source.file "wss_files" {
-	targets = [
-		// devin-cron output: backup.log, intake.log, ...
-		{ __path__ = "/logsrc/wss/*.log", job = "wss-cron", level = "info" },
-		// wss-webserver: mail-catcher
-		{ __path__ = "/logsrc/webstack/mail.log", job = "mail-catcher", level = "info" },
-		// site-app logs komen via wss_log_pull.sh (devin-cron,
-		// 15-min pull -> Loki push API) — bewust géén file-tail
-		// op de backup-mirror: dat gaf dubbele regels.
-	]
+	targets = concat(
+		local.file_match.wss_cron_logs.targets,
+		local.file_match.webstack_logs.targets,
+	)
+	// site-app logs komen via wss_log_pull.sh (devin-cron,
+	// 15-min pull -> Loki push API) — bewust géén file-tail
+	// op de backup-mirror: dat gaf dubbele regels.
 	forward_to = [loki.write.default.receiver]
 }
 
