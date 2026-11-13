@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 12,
+  "version": 13,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -422,27 +422,26 @@
               "until": true,
               "source": true,
               "labelTypes": true,
-              "LabelTypes": true
+              "LabelTypes": true,
+              "deploy": true,
+              "branch": true,
+              "commit": true
             },
             "indexByName": {
               "level": 0,
               "ts": 1,
               "srcip": 2,
               "event": 3,
-              "deploy": 4,
-              "branch": 5,
-              "commit": 6,
-              "details": 7
+              "deployinfo": 4,
+              "details": 5
             },
             "renameByName": {
               "ts": "Tijd",
               "srcip": "Src IP",
               "event": "Event",
-              "deploy": "Deploy",
-              "branch": "Branch",
-              "commit": "Commit",
               "level": "Sev",
-              "details": "Details"
+              "details": "Details",
+              "deployinfo": "Deploy"
             }
           }
         }
@@ -453,7 +452,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"site-app\", env=\"$env\"} |~ \"DEPLOY_2FA|DEPLOY_NOTIFY\" |~ \"$zoek\" | regexp `\\d{4}(?P<mo>\\d{2})(?P<dy>\\d{2}) (?P<hms>\\d{2}:\\d{2}:\\d{2}) - (?P<srcip>\\S+) - (?:(?:alert|crit|err|warn|notice|info|debug) - )?(?P<event>[A-Z0-9_]+)\\s*(?P<detail>\\{.*)?` | line_format `{{ .detail }}` | regexp `\"2fa\":\"(?P<twofa>[^\"]*)\"` | json | label_format ts=\"{{ .dy }}-{{ .mo }} {{ .hms }}\" | label_format details=\"{{ if .msg }}{{ .msg }} {{ end }}{{ if .reason }}{{ .reason }} {{ end }}{{ if .twofa }}[2FA: {{ .twofa }}] {{ end }}{{ if .user }}{{ .user }}{{ end }}{{ if .method }} ({{ .method }}){{ end }}{{ if .until }} until {{ .until }}{{ end }}{{ if .source }} via {{ .source }}{{ end }}\" | line_format `{{ .level }} | {{ .ts }} | {{ .srcip }} | {{ .event }}{{ if .deploy }}: {{ .deploy }}{{ end }}{{ if .branch }} | {{ .branch }}{{ end }}`",
+          "expr": "{job=\"site-app\", env=\"$env\"} |~ \"DEPLOY_2FA|DEPLOY_NOTIFY\" |~ \"$zoek\" | regexp `\\d{4}(?P<mo>\\d{2})(?P<dy>\\d{2}) (?P<hms>\\d{2}:\\d{2}:\\d{2}) - (?P<srcip>\\S+) - (?:(?:alert|crit|err|warn|notice|info|debug) - )?(?P<event>[A-Z0-9_]+)\\s*(?P<detail>\\{.*)?` | line_format `{{ .detail }}` | regexp `\"2fa\":\"(?P<twofa>[^\"]*)\"` | json | label_format ts=\"{{ .dy }}-{{ .mo }} {{ .hms }}\" | label_format details=\"{{ if .msg }}{{ .msg }} {{ end }}{{ if .reason }}{{ .reason }} {{ end }}{{ if .twofa }}[2FA: {{ .twofa }}] {{ end }}{{ if .user }}{{ .user }}{{ end }}{{ if .method }} ({{ .method }}){{ end }}{{ if .until }} until {{ .until }}{{ end }}{{ if .source }} via {{ .source }}{{ end }}\" | label_format deployinfo=\"{{ if .deploy }}{{ .deploy }}{{ end }}{{ if .branch }} | {{ .branch }}{{ end }}{{ if .commit }} | {{ .commit }}{{ end }}\" | line_format `{{ .level }} | {{ .ts }} | {{ .srcip }} | {{ .event }}{{ if .deploy }}: {{ .deploy }}{{ end }}{{ if .branch }} | {{ .branch }}{{ end }}`",
           "refId": "A",
           "queryType": "instant",
           "maxLines": 500
