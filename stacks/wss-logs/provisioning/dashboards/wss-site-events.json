@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 13,
+  "version": 14,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -365,7 +365,80 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Sev"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 65
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Syslog"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 80
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Tijd"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 140
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Src IP"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 115
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Event"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 200
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Deploy"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 165
+              }
+            ]
+          }
+        ]
       },
       "options": {
         "cellHeight": "sm",
@@ -425,15 +498,17 @@
               "LabelTypes": true,
               "deploy": true,
               "branch": true,
-              "commit": true
+              "commit": true,
+              "sev": true
             },
             "indexByName": {
               "level": 0,
-              "ts": 1,
-              "srcip": 2,
-              "event": 3,
-              "deployinfo": 4,
-              "details": 5
+              "syslog": 1,
+              "ts": 2,
+              "srcip": 3,
+              "event": 4,
+              "deployinfo": 5,
+              "details": 6
             },
             "renameByName": {
               "ts": "Tijd",
@@ -441,7 +516,8 @@
               "event": "Event",
               "level": "Sev",
               "details": "Details",
-              "deployinfo": "Deploy"
+              "deployinfo": "Deploy",
+              "syslog": "Syslog"
             }
           }
         }
@@ -452,7 +528,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"site-app\", env=\"$env\"} |~ \"DEPLOY_2FA|DEPLOY_NOTIFY\" |~ \"$zoek\" | regexp `\\d{4}(?P<mo>\\d{2})(?P<dy>\\d{2}) (?P<hms>\\d{2}:\\d{2}:\\d{2}) - (?P<srcip>\\S+) - (?:(?:alert|crit|err|warn|notice|info|debug) - )?(?P<event>[A-Z0-9_]+)\\s*(?P<detail>\\{.*)?` | line_format `{{ .detail }}` | regexp `\"2fa\":\"(?P<twofa>[^\"]*)\"` | json | label_format ts=\"{{ .dy }}-{{ .mo }} {{ .hms }}\" | label_format details=\"{{ if .msg }}{{ .msg }} {{ end }}{{ if .reason }}{{ .reason }} {{ end }}{{ if .twofa }}[2FA: {{ .twofa }}] {{ end }}{{ if .user }}{{ .user }}{{ end }}{{ if .method }} ({{ .method }}){{ end }}{{ if .until }} until {{ .until }}{{ end }}{{ if .source }} via {{ .source }}{{ end }}\" | label_format deployinfo=\"{{ if .deploy }}{{ .deploy }}{{ end }}{{ if .branch }} | {{ .branch }}{{ end }}{{ if .commit }} | {{ .commit }}{{ end }}\" | line_format `{{ .level }} | {{ .ts }} | {{ .srcip }} | {{ .event }}{{ if .deploy }}: {{ .deploy }}{{ end }}{{ if .branch }} | {{ .branch }}{{ end }}`",
+          "expr": "{job=\"site-app\", env=\"$env\"} |~ \"DEPLOY_2FA|DEPLOY_NOTIFY\" |~ \"$zoek\" | regexp `\\d{4}(?P<mo>\\d{2})(?P<dy>\\d{2}) (?P<hms>\\d{2}:\\d{2}:\\d{2}) - (?P<srcip>\\S+) - (?:(?P<sev>alert|crit|err|warn|notice|info|debug) - )?(?P<event>[A-Z0-9_]+)\\s*(?P<detail>\\{.*)?` | line_format `{{ .detail }}` | regexp `\"2fa\":\"(?P<twofa>[^\"]*)\"` | json | label_format ts=\"{{ .dy }}-{{ .mo }} {{ .hms }}\" | label_format syslog=\"{{ if .sev }}{{ .sev }}{{ else }}{{ .level }}{{ end }}\" | label_format details=\"{{ if .msg }}{{ .msg }} {{ end }}{{ if .reason }}{{ .reason }} {{ end }}{{ if .twofa }}[2FA: {{ .twofa }}] {{ end }}{{ if .user }}{{ .user }}{{ end }}{{ if .method }} ({{ .method }}){{ end }}{{ if .until }} until {{ .until }}{{ end }}{{ if .source }} via {{ .source }}{{ end }}\" | label_format deployinfo=\"{{ if .deploy }}{{ .deploy }}{{ end }}{{ if .branch }} | {{ .branch }}{{ end }}{{ if .commit }} | {{ .commit }}{{ end }}\" | line_format `{{ .level }} | {{ .ts }} | {{ .srcip }} | {{ .event }}{{ if .deploy }}: {{ .deploy }}{{ end }}{{ if .branch }} | {{ .branch }}{{ end }}`",
           "refId": "A",
           "queryType": "instant",
           "maxLines": 500
