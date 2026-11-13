@@ -7,6 +7,12 @@ services:
     container_name: devin
     hostname: devin
     restart: unless-stopped
+    # json-file logrotatie (AVG/opslag): max 3x10MB per container
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     environment:
       TZ: Europe/Amsterdam
       DEVIN_WEB_PASSWORD: "VERVANG_DOOR_STERK_WACHTWOORD"
@@ -45,6 +51,12 @@ services:
     container_name: wss-flows
     hostname: wss-flows
     restart: unless-stopped
+    # json-file logrotatie (AVG/opslag): max 3x10MB per container
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     environment:
       TZ: Europe/Amsterdam
       LETS_ENCRYPT_ENABLED: "false"
@@ -67,6 +79,12 @@ services:
     container_name: wss-monitoring
     hostname: wss-monitoring
     restart: unless-stopped
+    # json-file logrotatie (AVG/opslag): max 3x10MB per container
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     environment:
       TZ: Europe/Amsterdam
       MONITOR_WEB_PASSWORD: "VERVANG_DOOR_STERK_WACHTWOORD"
@@ -89,6 +107,12 @@ services:
     container_name: wss-webserver
     hostname: wss-webserver
     restart: unless-stopped
+    # json-file logrotatie (AVG/opslag): max 3x10MB per container
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     environment:
       TZ: Europe/Amsterdam
       MYSQL_ROOT_PASSWORD: "VERVANG_DOOR_STERK_WACHTWOORD"

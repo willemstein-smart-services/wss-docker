@@ -29,6 +29,12 @@ services:
     container_name: wss-grafana
     hostname: wss-grafana
     restart: unless-stopped
+    # json-file logrotatie (AVG/opslag): max 3x10MB per container
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     environment:
       TZ: Europe/Amsterdam
       GF_SECURITY_ADMIN_USER: admin
@@ -48,6 +54,12 @@ services:
     container_name: wss-loki
     hostname: wss-loki
     restart: unless-stopped
+    # json-file logrotatie (AVG/opslag): max 3x10MB per container
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     command: -config.file=/etc/loki/local-config.yaml
     volumes:
       - /volume1/docker/wss-grafana/loki:/loki
@@ -62,6 +74,12 @@ services:
     container_name: wss-metrics
     hostname: wss-metrics
     restart: unless-stopped
+    # json-file logrotatie (AVG/opslag): max 3x10MB per container
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     command: >
       -retentionPeriod=90d
       -storageDataPath=/storage
@@ -78,6 +96,12 @@ services:
     container_name: wss-alloy
     hostname: wss-alloy
     restart: unless-stopped
+    # json-file logrotatie (AVG/opslag): max 3x10MB per container
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     user: "0"
     environment:
       # Uptime Kuma API-key voor /metrics scrape (read-only)
