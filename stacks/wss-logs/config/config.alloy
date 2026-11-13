@@ -63,7 +63,27 @@ loki.source.file "wss_files" {
 	// site-app logs komen via wss_log_pull.sh (devin-cron,
 	// 15-min pull -> Loki push API) — bewust géén file-tail
 	// op de backup-mirror: dat gaf dubbele regels.
+	forward_to = [loki.process.wss_files.receiver]
+}
+
+// wss-cron/mail-catcher bestanden krijgen van file_match statisch
+// level=info — leid het echte level af uit de regeltekst zodat de
+// cron-error kaart (WSS Overall) op het label kan filteren.
+loki.process "wss_files" {
 	forward_to = [loki.write.default.receiver]
+
+	stage.regex {
+		expression = `(?i)\b(?P<sev_word>fatal|crit(?:ical)?|panic|error|fout|failed|mislukt|exception|traceback|denied|refused|warn(?:ing)?)\b`
+	}
+	stage.template {
+		source   = "level_derived"
+		template = `{{ if .sev_word }}{{ $w := .sev_word | lower }}{{ if or (eq $w "warn") (eq $w "warning") }}warn{{ else if or (eq $w "fatal") (eq $w "panic") (eq $w "crit") (eq $w "critical") }}crit{{ else }}err{{ end }}{{ else }}info{{ end }}`
+	}
+	stage.labels {
+		values = {
+			level = "level_derived",
+		}
+	}
 }
 
 // ---------------------------------------------------------------
