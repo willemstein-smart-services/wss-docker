@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 7,
+  "version": 8,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -332,9 +332,9 @@
     },
     {
       "id": 5,
-      "type": "logs",
+      "type": "table",
       "title": "Git / Deploy events",
-      "description": "Deploy-pijplijn: 2FA lock/unlock + deploy-notifications. Klik op een regel voor alle velden (commit-msg, 2FA-status, mail, ttl).",
+      "description": "Deploy-pijplijn als tabel: 2FA lock/unlock + deploy-notifications. Volledige commit-msg staat in de laatste kolom (hover voor volledige tekst).",
       "gridPos": {
         "h": 9,
         "w": 12,
@@ -345,25 +345,120 @@
         "type": "loki",
         "uid": "loki"
       },
-      "options": {
-        "dedupStrategy": "none",
-        "enableLogDetails": true,
-        "prettifyLogMessage": false,
-        "showCommonLabels": false,
-        "showLabels": false,
-        "showTime": false,
-        "sortOrder": "Descending",
-        "wrapLogMessage": true
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
       },
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Line": true,
+              "labels": true,
+              "mo": true,
+              "dy": true,
+              "hms": true,
+              "detail": true,
+              "job": true,
+              "host": true,
+              "src": true,
+              "level": true,
+              "detected_level": true,
+              "service_name": true,
+              "filename": true,
+              "id": true,
+              "tsNs": true
+            },
+            "indexByName": {
+              "ts": 0,
+              "event": 1,
+              "deploy": 2,
+              "branch": 3,
+              "env": 4,
+              "env_extracted": 5,
+              "commit": 6,
+              "srcip": 7,
+              "twofa": 8,
+              "user": 9,
+              "method": 10,
+              "until": 11,
+              "source": 12,
+              "reason": 13,
+              "msg": 14,
+              "mail": 15,
+              "ttl": 16,
+              "key_provided": 17
+            },
+            "renameByName": {
+              "ts": "Tijd",
+              "event": "Event",
+              "deploy": "Deploy",
+              "branch": "Branch",
+              "env": "Site",
+              "env_extracted": "Doel-env",
+              "commit": "Commit",
+              "srcip": "Src IP",
+              "twofa": "2FA",
+              "user": "User",
+              "method": "Method",
+              "until": "Until",
+              "source": "Via",
+              "reason": "Reden",
+              "msg": "Message",
+              "mail": "Mail",
+              "ttl": "TTL",
+              "key_provided": "Key?"
+            }
+          }
+        }
+      ],
       "targets": [
         {
           "datasource": {
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"site-app\", env=\"$env\"} |~ \"DEPLOY_2FA|DEPLOY_NOTIFY\" |~ \"$zoek\" | regexp `\\d{4}(?P<mo>\\d{2})(?P<dy>\\d{2}) (?P<hms>\\d{2}:\\d{2}:\\d{2}) - (?P<srcip>\\S+) - (?:(?:alert|crit|err|warn|notice|info|debug) - )?(?P<event>[A-Z0-9_]+)\\s*(?P<detail>\\{.*)?` | line_format `{{ .detail }}` | regexp `\"2fa\":\"(?P<twofa>[^\"]*)\"` | json | line_format `{{ .dy }}-{{ .mo }} {{ .hms }} | {{ .srcip }} | {{ .event }}{{ if .deploy }}: {{ .deploy }}{{ end }}{{ if .branch }} | branch: {{ .branch }}{{ end }}{{ if .env_extracted }} | env: {{ .env_extracted }}{{ end }}{{ if .commit }} | {{ .commit }}{{ end }}{{ if .twofa }} | 2fa: {{ .twofa }}{{ end }}{{ if eq .mail \"failed\" }} | mail: FAILED{{ end }}{{ if .user }} | user: {{ .user }}{{ end }}{{ if .method }} | {{ .method }}{{ end }}{{ if .until }} | until: {{ .until }}{{ end }}{{ if .source }} | via: {{ .source }}{{ end }}{{ if .reason }} | {{ .reason }}{{ end }}`",
+          "expr": "{job=\"site-app\", env=\"$env\"} |~ \"DEPLOY_2FA|DEPLOY_NOTIFY\" |~ \"$zoek\" | regexp `\\d{4}(?P<mo>\\d{2})(?P<dy>\\d{2}) (?P<hms>\\d{2}:\\d{2}:\\d{2}) - (?P<srcip>\\S+) - (?:(?:alert|crit|err|warn|notice|info|debug) - )?(?P<event>[A-Z0-9_]+)\\s*(?P<detail>\\{.*)?` | line_format `{{ .detail }}` | regexp `\"2fa\":\"(?P<twofa>[^\"]*)\"` | json | label_format ts=\"{{ .dy }}-{{ .mo }} {{ .hms }}\"",
           "refId": "A",
-          "queryType": "range"
+          "queryType": "instant",
+          "maxLines": 500
         }
       ]
     },
