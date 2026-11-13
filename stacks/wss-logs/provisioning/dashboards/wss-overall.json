@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 15,
+  "version": 16,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -538,7 +538,7 @@
         "prettifyLogMessage": false,
         "showCommonLabels": false,
         "showLabels": false,
-        "showTime": true,
+        "showTime": false,
         "sortOrder": "Descending",
         "wrapLogMessage": true
       },
@@ -548,7 +548,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"site-app\", env=\"$env\"} |~ \"DEPLOY_2FA|DEPLOY_NOTIFY\" |~ \"$zoek\" | regexp `\\d{8} \\d{2}:\\d{2}:\\d{2} - \\S+ - (?:(?:alert|crit|err|warn|notice|info|debug) - )?(?P<event>[A-Z0-9_]+)\\s*(?P<detail>\\{.*)?` | line_format `{{ .detail }}` | json | line_format `{{ .event }}{{ if .deploy }}: {{ .deploy }}{{ end }}{{ if .branch }} | branch: {{ .branch }}{{ end }}{{ if .env_extracted }} | env: {{ .env_extracted }}{{ end }}{{ if .commit }} | {{ .commit }}{{ end }}{{ if .user }} | user: {{ .user }}{{ end }}{{ if .method }} | {{ .method }}{{ end }}{{ if .until }} | until: {{ .until }}{{ end }}{{ if .source }} | via: {{ .source }}{{ end }}{{ if .reason }} | {{ .reason }}{{ end }}`",
+          "expr": "{job=\"site-app\", env=\"$env\"} |~ \"DEPLOY_2FA|DEPLOY_NOTIFY\" |~ \"$zoek\" | regexp `\\d{4}(?P<mo>\\d{2})(?P<dy>\\d{2}) (?P<hms>\\d{2}:\\d{2}:\\d{2}) - (?P<srcip>\\S+) - (?:(?:alert|crit|err|warn|notice|info|debug) - )?(?P<event>[A-Z0-9_]+)\\s*(?P<detail>\\{.*)?` | line_format `{{ .detail }}` | regexp `\"2fa\":\"(?P<twofa>[^\"]*)\"` | json | line_format `{{ .dy }}-{{ .mo }} {{ .hms }} | {{ .srcip }} | {{ .event }}{{ if .deploy }}: {{ .deploy }}{{ end }}{{ if .branch }} | branch: {{ .branch }}{{ end }}{{ if .env_extracted }} | env: {{ .env_extracted }}{{ end }}{{ if .commit }} | {{ .commit }}{{ end }}{{ if .twofa }} | 2fa: {{ .twofa }}{{ end }}{{ if eq .mail \"failed\" }} | mail: FAILED{{ end }}{{ if .user }} | user: {{ .user }}{{ end }}{{ if .method }} | {{ .method }}{{ end }}{{ if .until }} | until: {{ .until }}{{ end }}{{ if .source }} | via: {{ .source }}{{ end }}{{ if .reason }} | {{ .reason }}{{ end }}`",
           "refId": "A",
           "queryType": "range"
         }
