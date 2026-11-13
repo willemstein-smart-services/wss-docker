@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 16,
+  "version": 17,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -511,7 +511,12 @@
               "deploy": true,
               "branch": true,
               "commit": true,
-              "sev": true
+              "sev": true,
+              "file": true,
+              "veld": true,
+              "actie": true,
+              "via": true,
+              "actor": true
             },
             "indexByName": {
               "level": 0,
