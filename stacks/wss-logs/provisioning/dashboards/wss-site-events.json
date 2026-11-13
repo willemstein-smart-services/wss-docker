@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 14,
+  "version": 15,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -459,6 +459,18 @@
           "options": {
             "source": "labels",
             "format": "json"
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "Time",
+                "desc": true
+              }
+            ]
           }
         },
         {
