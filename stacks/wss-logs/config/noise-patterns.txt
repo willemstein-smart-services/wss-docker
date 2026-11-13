@@ -19,3 +19,6 @@ entry too far behind  # Alloy duplicaat-pushes na restart/reload
 failed to tail file  # Alloy file-source bij restart/missende target
 empty ring           # Loki ingester-ring tijdens opstarten
 apis/quotas          # Grafana interne quota-API 5xx chatter
+has timestamp too old   # Loki reject op verlopen/gedupliceerde pushes (replay na restart, zelfde familie als 'entry too far behind')
+ingestion rate limit exceeded  # Loki distributor rate-limit bursts (interne Loki-ruis)
+no retries left       # Alloy dropt batches rond Loki-restart/overload ('final error sending batch')

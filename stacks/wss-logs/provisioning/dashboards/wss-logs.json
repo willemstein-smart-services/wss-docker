@@ -122,7 +122,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum by (container) (count_over_time({job=\"docker\"} |~ \"(?i)error|exception|fatal\" !~ \"level=info|level=debug|scheduler_processor|context canceled|entry too far behind|failed to tail file|empty ring|apis/quotas\"[$__range]))",
+          "expr": "sum by (container) (count_over_time({job=\"docker\"} |~ \"(?i)error|exception|fatal\" !~ \"level=info|level=debug|scheduler_processor|context canceled|entry too far behind|failed to tail file|empty ring|apis/quotas|has timestamp too old|ingestion rate limit exceeded|no retries left\"[$__range]))",
           "legendFormat": "{{container}}",
           "queryType": "instant",
           "refId": "A"
@@ -163,7 +163,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=~\".+\"} |~ \"(?i)error|warn|fail|exception|fatal\" !~ \"level=info|level=debug|scheduler_processor|context canceled|entry too far behind|failed to tail file|empty ring|apis/quotas\"",
+          "expr": "{job=~\".+\"} |~ \"(?i)error|warn|fail|exception|fatal\" !~ \"level=info|level=debug|scheduler_processor|context canceled|entry too far behind|failed to tail file|empty ring|apis/quotas|has timestamp too old|ingestion rate limit exceeded|no retries left\"",
           "refId": "A"
         }
       ],
@@ -333,5 +333,5 @@
   "timezone": "browser",
   "title": "Docker Logs Overzicht",
   "uid": "wss-logs-overview",
-  "version": 14
+  "version": 15
 }

@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 11,
+  "version": 12,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -209,7 +209,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum(count_over_time({job=\"docker\", container=~\"devin|wss-.*|homarr.*\"} |~ \"(?i)error|exception|fatal\" !~ \"level=info|level=debug|scheduler_processor|context canceled|entry too far behind|failed to tail file|empty ring|apis/quotas\"[$__range]))",
+          "expr": "sum(count_over_time({job=\"docker\", container=~\"devin|wss-.*|homarr.*\"} |~ \"(?i)error|exception|fatal\" !~ \"level=info|level=debug|scheduler_processor|context canceled|entry too far behind|failed to tail file|empty ring|apis/quotas|has timestamp too old|ingestion rate limit exceeded|no retries left\"[$__range]))",
           "refId": "A",
           "queryType": "instant"
         }
@@ -401,7 +401,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"docker\", container=~\"devin|wss-.*|homarr.*\"} |~ \"(?i)error|exception|fatal\" !~ \"level=info|level=debug|scheduler_processor|context canceled|entry too far behind|failed to tail file|empty ring|apis/quotas\"",
+          "expr": "{job=\"docker\", container=~\"devin|wss-.*|homarr.*\"} |~ \"(?i)error|exception|fatal\" !~ \"level=info|level=debug|scheduler_processor|context canceled|entry too far behind|failed to tail file|empty ring|apis/quotas|has timestamp too old|ingestion rate limit exceeded|no retries left\"",
           "refId": "A",
           "queryType": "range"
         }
