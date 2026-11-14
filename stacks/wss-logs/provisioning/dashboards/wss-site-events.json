@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 17,
+  "version": 18,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -709,15 +709,15 @@
     {
       "id": 7,
       "type": "logs",
-      "title": "Alle events",
+      "title": "Alle events (raw)",
       "datasource": {
         "type": "loki",
         "uid": "loki"
       },
       "gridPos": {
         "h": 12,
-        "w": 24,
-        "x": 0,
+        "w": 12,
+        "x": 12,
         "y": 30
       },
       "targets": [
@@ -741,6 +741,180 @@
         "sortOrder": "Descending",
         "wrapLogMessage": true
       }
+    },
+    {
+      "id": 10,
+      "type": "table",
+      "title": "Alle events",
+      "description": "Alle site-events als gestructureerde tabel (zelfde parsing als Git/Deploy-kaart): Datum, Sev, IP, Event + Details (ruwe JSON-details). Filtert mee op $env/$level/$zoek.",
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 0,
+        "y": 30
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Sev"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 70
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Datum"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 140
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "IP"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 115
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Event"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 200
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "{job=\"site-app\", env=\"$env\", level=~\"$level\"} |~ \"$zoek\" | regexp `\\d{4}(?P<mo>\\d{2})(?P<dy>\\d{2}) (?P<hms>\\d{2}:\\d{2}:\\d{2}) - (?P<srcip>\\S+) - (?:(?P<sev>alert|crit|err|warn|notice|info|debug) - )?(?P<event>[A-Z0-9_]+)\\s*(?P<detail>\\{.*)?` | label_format ts=\"{{ .dy }}-{{ .mo }} {{ .hms }}\", syslog=\"{{ if .sev }}{{ .sev }}{{ else }}{{ .level }}{{ end }}\", details=\"{{ .detail }}\"",
+          "refId": "A",
+          "queryType": "instant",
+          "maxLines": 500
+        }
+      ],
+      "transformations": [
+        {
+          "id": "extractFields",
+          "options": {
+            "source": "labels",
+            "format": "json"
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "Time",
+                "desc": true
+              }
+            ]
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Line": true,
+              "labels": true,
+              "job": true,
+              "host": true,
+              "src": true,
+              "level": true,
+              "detected_level": true,
+              "service_name": true,
+              "filename": true,
+              "id": true,
+              "tsNs": true,
+              "env": true,
+              "labelTypes": true,
+              "LabelTypes": true,
+              "mo": true,
+              "dy": true,
+              "hms": true,
+              "sev": true,
+              "detail": true
+            },
+            "indexByName": {
+              "syslog": 0,
+              "ts": 1,
+              "srcip": 2,
+              "event": 3,
+              "details": 4
+            },
+            "renameByName": {
+              "ts": "Datum",
+              "syslog": "Sev",
+              "srcip": "IP",
+              "event": "Event",
+              "details": "Details"
+            }
+          }
+        }
+      ]
     }
   ]
 }
