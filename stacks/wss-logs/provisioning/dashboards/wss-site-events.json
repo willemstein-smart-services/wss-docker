@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 37,
+  "version": 38,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -1235,6 +1235,10 @@
               {
                 "id": "unit",
                 "value": "datetime:DD-MM HH:mm:ss"
+              },
+              {
+                "id": "custom.width",
+                "value": 150
               }
             ]
           }
