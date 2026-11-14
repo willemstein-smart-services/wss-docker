@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 29,
+  "version": 30,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -932,7 +932,7 @@
         "y": 5
       },
       "datasource": {
-        "type": "victoriametrics-metrics-datasource",
+        "type": "prometheus",
         "uid": "metrics"
       },
       "fieldConfig": {
@@ -970,7 +970,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "victoriametrics-metrics-datasource",
+            "type": "prometheus",
             "uid": "metrics"
           },
           "expr": "wss_site_customers{env=\"$env\"}",
@@ -990,7 +990,7 @@
         "y": 5
       },
       "datasource": {
-        "type": "victoriametrics-metrics-datasource",
+        "type": "prometheus",
         "uid": "metrics"
       },
       "fieldConfig": {
@@ -1028,7 +1028,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "victoriametrics-metrics-datasource",
+            "type": "prometheus",
             "uid": "metrics"
           },
           "expr": "wss_site_contracts{env=\"$env\"}",
@@ -1048,7 +1048,7 @@
         "y": 5
       },
       "datasource": {
-        "type": "victoriametrics-metrics-datasource",
+        "type": "prometheus",
         "uid": "metrics"
       },
       "fieldConfig": {
@@ -1086,7 +1086,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "victoriametrics-metrics-datasource",
+            "type": "prometheus",
             "uid": "metrics"
           },
           "expr": "wss_site_tickets_open{env=\"$env\"}",
@@ -1106,7 +1106,7 @@
         "y": 5
       },
       "datasource": {
-        "type": "victoriametrics-metrics-datasource",
+        "type": "prometheus",
         "uid": "metrics"
       },
       "fieldConfig": {
@@ -1144,7 +1144,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "victoriametrics-metrics-datasource",
+            "type": "prometheus",
             "uid": "metrics"
           },
           "expr": "wss_site_invoices{env=\"$env\"}",
@@ -1159,12 +1159,12 @@
       "title": "TIMER",
       "gridPos": {
         "h": 5,
-        "w": 8,
-        "x": 16,
+        "w": 4,
+        "x": 20,
         "y": 5
       },
       "datasource": {
-        "type": "victoriametrics-metrics-datasource",
+        "type": "prometheus",
         "uid": "metrics"
       },
       "description": "Proof-of-life timers uit het status-endpoint (poll elke 15 min; waarden iets vertraagd)",
@@ -1283,7 +1283,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "victoriametrics-metrics-datasource",
+            "type": "prometheus",
             "uid": "metrics"
           },
           "expr": "wss_site_hk_state_age_s{env=\"$env\"}",
@@ -1293,7 +1293,7 @@
         },
         {
           "datasource": {
-            "type": "victoriametrics-metrics-datasource",
+            "type": "prometheus",
             "uid": "metrics"
           },
           "expr": "(wss_site_deploy_2fa_until{env=\"$env\"} > 0) - 10800",
@@ -1303,7 +1303,7 @@
         },
         {
           "datasource": {
-            "type": "victoriametrics-metrics-datasource",
+            "type": "prometheus",
             "uid": "metrics"
           },
           "expr": "wss_site_deploy_2fa_until{env=\"$env\"} - time()",
@@ -1326,6 +1326,79 @@
               "Time": true
             }
           }
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "type": "stat",
+      "title": "Deploy-2FA",
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 16,
+        "y": 5
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "metrics"
+      },
+      "description": "0=LOCKED, 1=UNLOCKED — uit status-endpoint",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "LOCKED",
+                  "color": "red"
+                },
+                "1": {
+                  "text": "UNLOCKED",
+                  "color": "green"
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "metrics"
+          },
+          "expr": "wss_site_deploy_2fa_unlocked{env=\"$env\"}",
+          "refId": "A",
+          "instant": true
         }
       ]
     }
