@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 42,
+  "version": 43,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -1169,7 +1169,7 @@
       },
       "description": "Proof-of-life timers uit het status-endpoint (poll elke 15 min; waarden iets vertraagd)",
       "options": {
-        "showHeader": true,
+        "showHeader": false,
         "cellHeight": "sm",
         "footer": {
           "show": false
