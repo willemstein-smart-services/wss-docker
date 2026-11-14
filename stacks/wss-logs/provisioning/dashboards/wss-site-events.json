@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 53,
+  "version": 54,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -1291,7 +1291,7 @@
           "refId": "A",
           "instant": true,
           "format": "table",
-          "expr": "(label_set(0 - (last_over_time(wss_site_hk_state_age_s{env=\"$env\"}[1h]) >= 0), \"timer\", \"Housekeeping\") default label_set(vector(-999999999999), \"timer\", \"Housekeeping\")) or (label_set(((last_over_time(wss_site_deploy_2fa_until{env=\"$env\"}[1h]) > 0) - 10800) - time(), \"timer\", \"2FA unlocked\") default label_set(vector(-999999999999), \"timer\", \"2FA unlocked\")) or (label_set((last_over_time(wss_site_deploy_2fa_until{env=\"$env\"}[1h]) > 0) - time(), \"timer\", \"2FA resterend\") default label_set(vector(-999999999999), \"timer\", \"2FA resterend\"))"
+          "expr": "(label_set(0 - (last_over_time(wss_site_hk_state_age_s{env=~\"$env\"}[1h]) >= 0), \"timer\", \"Housekeeping\") default label_set(vector(-999999999999), \"timer\", \"Housekeeping\")) or (label_set(((last_over_time(wss_site_deploy_2fa_until{env=~\"$env\"}[1h]) > 0) - 10800) - time(), \"timer\", \"2FA unlocked\") default label_set(vector(-999999999999), \"timer\", \"2FA unlocked\")) or (label_set((last_over_time(wss_site_deploy_2fa_until{env=~\"$env\"}[1h]) > 0) - time(), \"timer\", \"2FA resterend\") default label_set(vector(-999999999999), \"timer\", \"2FA resterend\"))"
         },
         {
           "datasource": {
@@ -1301,7 +1301,7 @@
           "refId": "B",
           "instant": true,
           "format": "table",
-          "expr": "label_set(1000 * (time() - (last_over_time(wss_site_hk_state_age_s{env=\"$env\"}[1h]) >= 0)), \"timer\", \"Housekeeping\") or label_set(1000 * ((last_over_time(wss_site_deploy_2fa_until{env=\"$env\"}[1h]) > 0) - 10800), \"timer\", \"2FA unlocked\") or label_set(1000 * last_over_time(wss_site_deploy_2fa_until{env=\"$env\"}[1h]), \"timer\", \"2FA resterend\")"
+          "expr": "label_set(1000 * (time() - (last_over_time(wss_site_hk_state_age_s{env=~\"$env\"}[1h]) >= 0)), \"timer\", \"Housekeeping\") or label_set(1000 * ((last_over_time(wss_site_deploy_2fa_until{env=~\"$env\"}[1h]) > 0) - 10800), \"timer\", \"2FA unlocked\") or label_set(1000 * last_over_time(wss_site_deploy_2fa_until{env=~\"$env\"}[1h]), \"timer\", \"2FA resterend\")"
         }
       ],
       "transformations": [
