@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 47,
+  "version": 48,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -1295,8 +1295,8 @@
             },
             "indexByName": {
               "timer": 0,
-              "Tijd": 1,
-              "Waarde": 2
+              "Waarde": 1,
+              "Tijd": 2
             }
           }
         },
