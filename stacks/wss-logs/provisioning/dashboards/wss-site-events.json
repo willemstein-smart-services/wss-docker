@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 26,
+  "version": 27,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -838,7 +838,7 @@
     {
       "id": 11,
       "type": "row",
-      "title": "Errors & alerts",
+      "title": "Errors & alerts + Alle events (raw)",
       "collapsed": true,
       "gridPos": {
         "h": 1,
@@ -857,7 +857,7 @@
           },
           "gridPos": {
             "h": 12,
-            "w": 24,
+            "w": 12,
             "x": 0,
             "y": 0
           },
@@ -882,21 +882,7 @@
             "sortOrder": "Descending",
             "wrapLogMessage": true
           }
-        }
-      ]
-    },
-    {
-      "id": 12,
-      "type": "row",
-      "title": "Alle events (raw)",
-      "collapsed": true,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 23
-      },
-      "panels": [
+        },
         {
           "id": 7,
           "type": "logs",
@@ -907,8 +893,8 @@
           },
           "gridPos": {
             "h": 12,
-            "w": 24,
-            "x": 0,
+            "w": 12,
+            "x": 12,
             "y": 0
           },
           "targets": [
