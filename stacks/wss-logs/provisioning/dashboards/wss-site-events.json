@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 46,
+  "version": 47,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -1349,11 +1349,11 @@
               "options": {
                 "0": {
                   "text": "LOCKED",
-                  "color": "red"
+                  "color": "green"
                 },
                 "1": {
                   "text": "UNLOCKED",
-                  "color": "green"
+                  "color": "red"
                 }
               }
             }
