@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 18,
+  "version": 20,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -746,7 +746,7 @@
       "id": 10,
       "type": "table",
       "title": "Alle events",
-      "description": "Alle site-events als gestructureerde tabel (zelfde parsing als Git/Deploy-kaart): Datum, Sev, IP, Event + Details (ruwe JSON-details). Filtert mee op $env/$level/$zoek.",
+      "description": "Alle site-events als gestructureerde tabel (zelfde parsing als Git/Deploy-kaart): Datum, Sev, IP, Event + Details (JSON uit { } als key: value). Filtert mee op $env/$level/$zoek.",
       "gridPos": {
         "h": 12,
         "w": 12,
@@ -847,7 +847,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"site-app\", env=\"$env\", level=~\"$level\"} |~ \"$zoek\" | regexp `\\d{4}(?P<mo>\\d{2})(?P<dy>\\d{2}) (?P<hms>\\d{2}:\\d{2}:\\d{2}) - (?P<srcip>\\S+) - (?:(?P<sev>alert|crit|err|warn|notice|info|debug) - )?(?P<event>[A-Z0-9_]+)\\s*(?P<detail>\\{.*)?` | label_format ts=\"{{ .dy }}-{{ .mo }} {{ .hms }}\", syslog=\"{{ if .sev }}{{ .sev }}{{ else }}{{ .level }}{{ end }}\", details=\"{{ .detail }}\"",
+          "expr": "{job=\"site-app\", env=\"$env\", level=~\"$level\"} |~ \"$zoek\" | regexp `\\d{4}(?P<mo>\\d{2})(?P<dy>\\d{2}) (?P<hms>\\d{2}:\\d{2}:\\d{2}) - (?P<srcip>\\S+) - (?:(?P<sev>alert|crit|err|warn|notice|info|debug) - )?(?P<event>[A-Z0-9_]+)\\s*(?P<detail>\\{.*)?` | label_format ts=`{{ .dy }}-{{ .mo }} {{ .hms }}`, syslog=`{{ if .sev }}{{ .sev }}{{ else }}{{ .level }}{{ end }}`, details=`{{ .detail | replace \"{\" \"\" | replace \"}\" \"\" | replace \"\\\":\\\"\" \": \" | replace \"\\\",\\\"\" \", \" | replace \"\\\"\" \"\" }}`",
           "refId": "A",
           "queryType": "instant",
           "maxLines": 500
