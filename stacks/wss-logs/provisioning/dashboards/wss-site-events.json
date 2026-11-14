@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 25,
+  "version": 26,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -550,42 +550,6 @@
       ]
     },
     {
-      "id": 6,
-      "type": "logs",
-      "title": "Errors & alerts",
-      "datasource": {
-        "type": "loki",
-        "uid": "loki"
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 12,
-        "y": 13
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "loki"
-          },
-          "expr": "{job=\"site-app\", env=\"$env\", level=~\"err|crit|alert\"} |~ \"$zoek\"",
-          "refId": "A",
-          "queryType": "range"
-        }
-      ],
-      "options": {
-        "dedupStrategy": "none",
-        "enableLogDetails": true,
-        "prettifyLogMessage": false,
-        "showCommonLabels": false,
-        "showLabels": false,
-        "showTime": true,
-        "sortOrder": "Descending",
-        "wrapLogMessage": true
-      }
-    },
-    {
       "id": 8,
       "type": "timeseries",
       "title": "Volume per event-type",
@@ -698,51 +662,15 @@
       }
     },
     {
-      "id": 7,
-      "type": "logs",
-      "title": "Alle events (raw)",
-      "datasource": {
-        "type": "loki",
-        "uid": "loki"
-      },
-      "gridPos": {
-        "h": 12,
-        "w": 12,
-        "x": 12,
-        "y": 22
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "loki"
-          },
-          "expr": "{job=\"site-app\", env=\"$env\", level=~\"$level\"} |~ \"$zoek\"",
-          "refId": "A",
-          "queryType": "range"
-        }
-      ],
-      "options": {
-        "dedupStrategy": "none",
-        "enableLogDetails": true,
-        "prettifyLogMessage": false,
-        "showCommonLabels": false,
-        "showLabels": false,
-        "showTime": true,
-        "sortOrder": "Descending",
-        "wrapLogMessage": true
-      }
-    },
-    {
       "id": 10,
       "type": "table",
       "title": "Alle events",
       "description": "Alle site-events als gestructureerde tabel (zelfde parsing als Git/Deploy-kaart): Datum, Sev, IP, Event + Details (JSON uit { } als key: value). Filtert mee op $env/$level/$zoek.",
       "gridPos": {
-        "h": 12,
+        "h": 9,
         "w": 12,
-        "x": 0,
-        "y": 22
+        "x": 12,
+        "y": 13
       },
       "datasource": {
         "type": "loki",
@@ -903,6 +831,106 @@
               "event": "Event",
               "details": "Details"
             }
+          }
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "type": "row",
+      "title": "Errors & alerts",
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "panels": [
+        {
+          "id": 6,
+          "type": "logs",
+          "title": "Errors & alerts",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 24,
+            "x": 0,
+            "y": 0
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "expr": "{job=\"site-app\", env=\"$env\", level=~\"err|crit|alert\"} |~ \"$zoek\"",
+              "refId": "A",
+              "queryType": "range"
+            }
+          ],
+          "options": {
+            "dedupStrategy": "none",
+            "enableLogDetails": true,
+            "prettifyLogMessage": false,
+            "showCommonLabels": false,
+            "showLabels": false,
+            "showTime": true,
+            "sortOrder": "Descending",
+            "wrapLogMessage": true
+          }
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "type": "row",
+      "title": "Alle events (raw)",
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 23
+      },
+      "panels": [
+        {
+          "id": 7,
+          "type": "logs",
+          "title": "Alle events (raw)",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 24,
+            "x": 0,
+            "y": 0
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "loki"
+              },
+              "expr": "{job=\"site-app\", env=\"$env\", level=~\"$level\"} |~ \"$zoek\"",
+              "refId": "A",
+              "queryType": "range"
+            }
+          ],
+          "options": {
+            "dedupStrategy": "none",
+            "enableLogDetails": true,
+            "prettifyLogMessage": false,
+            "showCommonLabels": false,
+            "showLabels": false,
+            "showTime": true,
+            "sortOrder": "Descending",
+            "wrapLogMessage": true
           }
         }
       ]
