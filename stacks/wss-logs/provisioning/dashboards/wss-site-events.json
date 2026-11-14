@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 21,
+  "version": 22,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -282,7 +282,7 @@
       "gridPos": {
         "h": 8,
         "w": 8,
-        "x": 0,
+        "x": 8,
         "y": 5
       },
       "targets": [
@@ -318,11 +318,8 @@
       },
       "options": {
         "legend": {
-          "displayMode": "table",
-          "placement": "right",
-          "calcs": [
-            "sum"
-          ]
+          "displayMode": "hidden",
+          "calcs": []
         },
         "tooltip": {
           "mode": "multi",
@@ -599,7 +596,7 @@
       "gridPos": {
         "h": 8,
         "w": 8,
-        "x": 8,
+        "x": 0,
         "y": 5
       },
       "targets": [
@@ -635,11 +632,8 @@
       },
       "options": {
         "legend": {
-          "displayMode": "table",
-          "placement": "right",
-          "calcs": [
-            "sum"
-          ]
+          "displayMode": "hidden",
+          "calcs": []
         },
         "tooltip": {
           "mode": "multi",
@@ -694,11 +688,8 @@
       },
       "options": {
         "legend": {
-          "displayMode": "table",
-          "placement": "right",
-          "calcs": [
-            "sum"
-          ]
+          "displayMode": "hidden",
+          "calcs": []
         },
         "tooltip": {
           "mode": "multi",
