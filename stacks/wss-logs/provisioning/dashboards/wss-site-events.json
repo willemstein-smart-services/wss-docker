@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 50,
+  "version": 51,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -29,8 +29,8 @@
           "type": "loki",
           "uid": "loki"
         },
-        "includeAll": false,
-        "multi": false,
+        "includeAll": true,
+        "multi": true,
         "name": "env",
         "options": [],
         "refresh": 2,
@@ -65,7 +65,7 @@
         "type": "query",
         "query": {
           "label": "level",
-          "stream": "{job=\"site-app\", env=\"$env\"}",
+          "stream": "{job=\"site-app\", env=~\"$env\"}",
           "type": 1
         }
       },
@@ -89,14 +89,14 @@
     {
       "id": 1,
       "type": "stat",
-      "title": "Events in periode",
+      "title": "Events (test)",
       "datasource": {
         "type": "loki",
         "uid": "loki"
       },
       "gridPos": {
         "h": 5,
-        "w": 8,
+        "w": 4,
         "x": 0,
         "y": 0
       },
@@ -106,7 +106,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum(count_over_time({job=\"site-app\", env=\"$env\"}[$__range]))",
+          "expr": "sum(count_over_time({job=\"site-app\", env=\"test_env\"}[$__range]))",
           "refId": "A",
           "queryType": "instant"
         }
@@ -165,7 +165,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum(count_over_time({job=\"site-app\", env=\"$env\", level=~\"err|crit|alert\"}[$__range]))",
+          "expr": "sum(count_over_time({job=\"site-app\", env=~\"$env\", level=~\"err|crit|alert\"}[$__range]))",
           "refId": "A",
           "queryType": "instant"
         }
@@ -232,7 +232,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "count(count by (ip) (count_over_time({job=\"site-app\", env=\"$env\"} | regexp `\\d{8} \\d{2}:\\d{2}:\\d{2} - (?P<ip>\\S+)`[$__range])))",
+          "expr": "count(count by (ip) (count_over_time({job=\"site-app\", env=~\"$env\"} | regexp `\\d{8} \\d{2}:\\d{2}:\\d{2} - (?P<ip>\\S+)`[$__range])))",
           "refId": "A",
           "queryType": "instant"
         }
@@ -291,7 +291,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum by (level) (count_over_time({job=\"site-app\", env=\"$env\"}[$__interval]))",
+          "expr": "sum by (level) (count_over_time({job=\"site-app\", env=~\"$env\"}[$__interval]))",
           "refId": "A",
           "queryType": "range",
           "legendFormat": "{{level}}"
@@ -542,7 +542,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"site-app\", env=\"$env\"} |~ \"DEPLOY_2FA|DEPLOY_NOTIFY|FTP_\" |~ \"$zoek\" | regexp `\\d{4}(?P<mo>\\d{2})(?P<dy>\\d{2}) (?P<hms>\\d{2}:\\d{2}:\\d{2}) - (?P<srcip>\\S+) - (?:(?P<sev>alert|crit|err|warn|notice|info|debug) - )?(?P<event>[A-Z0-9_]+)\\s*(?P<detail>\\{.*)?` | line_format `{{ .detail }}` | regexp `\"2fa\":\"(?P<twofa>[^\"]*)\"` | json | label_format ts=\"{{ .dy }}-{{ .mo }} {{ .hms }}\" | label_format syslog=\"{{ if .sev }}{{ .sev }}{{ else }}{{ .level }}{{ end }}\" | label_format details=\"{{ if .file }}{{ .file }}{{ end }}{{ if .veld }} ({{ .veld }}){{ end }}{{ if .actie }}: {{ .actie }}{{ end }}{{ if .actor }} [via {{ .actor }}]{{ end }}{{ if .msg }}{{ .msg }} {{ end }}{{ if .reason }}{{ .reason }} {{ end }}{{ if .twofa }}[2FA: {{ .twofa }}] {{ end }}{{ if .user }}{{ .user }}{{ end }}{{ if .method }} ({{ .method }}){{ end }}{{ if .until }} until {{ .until }}{{ end }}{{ if .source }} via {{ .source }}{{ end }}\" | label_format deployinfo=\"{{ if .deploy }}{{ .deploy }}{{ end }}{{ if .branch }} | {{ .branch }}{{ end }}{{ if .commit }} | {{ .commit }}{{ end }}\" | line_format `{{ .level }} | {{ .ts }} | {{ .srcip }} | {{ .event }}{{ if .deploy }}: {{ .deploy }}{{ end }}{{ if .branch }} | {{ .branch }}{{ end }}`",
+          "expr": "{job=\"site-app\", env=~\"$env\"} |~ \"DEPLOY_2FA|DEPLOY_NOTIFY|FTP_\" |~ \"$zoek\" | regexp `\\d{4}(?P<mo>\\d{2})(?P<dy>\\d{2}) (?P<hms>\\d{2}:\\d{2}:\\d{2}) - (?P<srcip>\\S+) - (?:(?P<sev>alert|crit|err|warn|notice|info|debug) - )?(?P<event>[A-Z0-9_]+)\\s*(?P<detail>\\{.*)?` | line_format `{{ .detail }}` | regexp `\"2fa\":\"(?P<twofa>[^\"]*)\"` | json | label_format ts=\"{{ .dy }}-{{ .mo }} {{ .hms }}\" | label_format syslog=\"{{ if .sev }}{{ .sev }}{{ else }}{{ .level }}{{ end }}\" | label_format details=\"{{ if .file }}{{ .file }}{{ end }}{{ if .veld }} ({{ .veld }}){{ end }}{{ if .actie }}: {{ .actie }}{{ end }}{{ if .actor }} [via {{ .actor }}]{{ end }}{{ if .msg }}{{ .msg }} {{ end }}{{ if .reason }}{{ .reason }} {{ end }}{{ if .twofa }}[2FA: {{ .twofa }}] {{ end }}{{ if .user }}{{ .user }}{{ end }}{{ if .method }} ({{ .method }}){{ end }}{{ if .until }} until {{ .until }}{{ end }}{{ if .source }} via {{ .source }}{{ end }}\" | label_format deployinfo=\"{{ if .deploy }}{{ .deploy }}{{ end }}{{ if .branch }} | {{ .branch }}{{ end }}{{ if .commit }} | {{ .commit }}{{ end }}\" | line_format `{{ .level }} | {{ .ts }} | {{ .srcip }} | {{ .event }}{{ if .deploy }}: {{ .deploy }}{{ end }}{{ if .branch }} | {{ .branch }}{{ end }}`",
           "refId": "A",
           "queryType": "instant",
           "maxLines": 500
@@ -571,7 +571,7 @@
           },
           "refId": "A",
           "queryType": "range",
-          "expr": "topk(10, sum by (event) (count_over_time({job=\"site-app\", env=\"$env\"} | regexp `\\d{8} \\d{2}:\\d{2}:\\d{2} - \\S+ - (?:(?:alert|crit|err|warn|notice|info|debug) - )?(?P<event>[A-Z0-9_]+)`[$__interval])))",
+          "expr": "topk(10, sum by (event) (count_over_time({job=\"site-app\", env=~\"$env\"} | regexp `\\d{8} \\d{2}:\\d{2}:\\d{2} - \\S+ - (?:(?:alert|crit|err|warn|notice|info|debug) - )?(?P<event>[A-Z0-9_]+)`[$__interval])))",
           "legendFormat": "{{event}}"
         }
       ],
@@ -627,7 +627,7 @@
           },
           "refId": "A",
           "queryType": "range",
-          "expr": "topk(10, sum by (ip) (count_over_time({job=\"site-app\", env=\"$env\"} | regexp `\\d{8} \\d{2}:\\d{2}:\\d{2} - (?P<ip>\\S+)`[$__interval])))",
+          "expr": "topk(10, sum by (ip) (count_over_time({job=\"site-app\", env=~\"$env\"} | regexp `\\d{8} \\d{2}:\\d{2}:\\d{2} - (?P<ip>\\S+)`[$__interval])))",
           "legendFormat": "{{ip}}"
         }
       ],
@@ -766,7 +766,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"site-app\", env=\"$env\", level=~\"$level\"} |~ \"$zoek\" | regexp `\\d{4}(?P<mo>\\d{2})(?P<dy>\\d{2}) (?P<hms>\\d{2}:\\d{2}:\\d{2}) - (?P<srcip>\\S+) - (?:(?P<sev>alert|crit|err|warn|notice|info|debug) - )?(?P<event>[A-Z0-9_]+)\\s*(?P<detail>\\{.*)?` | label_format ts=`{{ .dy }}-{{ .mo }} {{ .hms }}`, syslog=`{{ if .sev }}{{ .sev }}{{ else }}{{ .level }}{{ end }}`, details=`{{ .detail | replace \"{\" \"\" | replace \"}\" \"\" | replace \"\\\":\\\"\" \": \" | replace \"\\\",\\\"\" \", \" | replace \"\\\"\" \"\" }}`",
+          "expr": "{job=\"site-app\", env=~\"$env\", level=~\"$level\"} |~ \"$zoek\" | regexp `\\d{4}(?P<mo>\\d{2})(?P<dy>\\d{2}) (?P<hms>\\d{2}:\\d{2}:\\d{2}) - (?P<srcip>\\S+) - (?:(?P<sev>alert|crit|err|warn|notice|info|debug) - )?(?P<event>[A-Z0-9_]+)\\s*(?P<detail>\\{.*)?` | label_format ts=`{{ .dy }}-{{ .mo }} {{ .hms }}`, syslog=`{{ if .sev }}{{ .sev }}{{ else }}{{ .level }}{{ end }}`, details=`{{ .detail | replace \"{\" \"\" | replace \"}\" \"\" | replace \"\\\":\\\"\" \": \" | replace \"\\\",\\\"\" \", \" | replace \"\\\"\" \"\" }}`",
           "refId": "A",
           "queryType": "instant",
           "maxLines": 500
@@ -867,7 +867,7 @@
                 "type": "loki",
                 "uid": "loki"
               },
-              "expr": "{job=\"site-app\", env=\"$env\", level=~\"err|crit|alert\"} |~ \"$zoek\"",
+              "expr": "{job=\"site-app\", env=~\"$env\", level=~\"err|crit|alert\"} |~ \"$zoek\"",
               "refId": "A",
               "queryType": "range"
             }
@@ -903,7 +903,7 @@
                 "type": "loki",
                 "uid": "loki"
               },
-              "expr": "{job=\"site-app\", env=\"$env\", level=~\"$level\"} |~ \"$zoek\"",
+              "expr": "{job=\"site-app\", env=~\"$env\", level=~\"$level\"} |~ \"$zoek\"",
               "refId": "A",
               "queryType": "range"
             }
@@ -973,7 +973,7 @@
             "type": "prometheus",
             "uid": "metrics"
           },
-          "expr": "last_over_time(wss_site_customers{env=\"$env\"}[1h])",
+          "expr": "last_over_time(wss_site_customers{env=~\"$env\"}[1h])",
           "refId": "A",
           "instant": true
         }
@@ -1031,7 +1031,7 @@
             "type": "prometheus",
             "uid": "metrics"
           },
-          "expr": "last_over_time(wss_site_contracts{env=\"$env\"}[1h])",
+          "expr": "last_over_time(wss_site_contracts{env=~\"$env\"}[1h])",
           "refId": "A",
           "instant": true
         }
@@ -1089,7 +1089,7 @@
             "type": "prometheus",
             "uid": "metrics"
           },
-          "expr": "last_over_time(wss_site_tickets_open{env=\"$env\"}[1h])",
+          "expr": "last_over_time(wss_site_tickets_open{env=~\"$env\"}[1h])",
           "refId": "A",
           "instant": true
         }
@@ -1147,7 +1147,7 @@
             "type": "prometheus",
             "uid": "metrics"
           },
-          "expr": "last_over_time(wss_site_invoices{env=\"$env\"}[1h])",
+          "expr": "last_over_time(wss_site_invoices{env=~\"$env\"}[1h])",
           "refId": "A",
           "instant": true
         }
@@ -1242,7 +1242,7 @@
           "refId": "A",
           "instant": true,
           "format": "table",
-          "expr": "label_set(0 - last_over_time(wss_site_hk_state_age_s{env=\"$env\"}[1h]), \"timer\", \"Housekeeping\") or label_set(((last_over_time(wss_site_deploy_2fa_until{env=\"$env\"}[1h]) > 0) - 10800) - time(), \"timer\", \"2FA unlocked\") or label_set(last_over_time(wss_site_deploy_2fa_until{env=\"$env\"}[1h]) - time(), \"timer\", \"2FA resterend\")"
+          "expr": "label_set(0 - last_over_time(wss_site_hk_state_age_s{env=~\"$env\"}[1h]), \"timer\", \"Housekeeping\") or label_set(((last_over_time(wss_site_deploy_2fa_until{env=~\"$env\"}[1h]) > 0) - 10800) - time(), \"timer\", \"2FA unlocked\") or label_set(last_over_time(wss_site_deploy_2fa_until{env=~\"$env\"}[1h]) - time(), \"timer\", \"2FA resterend\")"
         },
         {
           "datasource": {
@@ -1252,7 +1252,7 @@
           "refId": "B",
           "instant": true,
           "format": "table",
-          "expr": "label_set(1000 * (time() - last_over_time(wss_site_hk_state_age_s{env=\"$env\"}[1h])), \"timer\", \"Housekeeping\") or label_set(1000 * ((last_over_time(wss_site_deploy_2fa_until{env=\"$env\"}[1h]) > 0) - 10800), \"timer\", \"2FA unlocked\") or label_set(1000 * last_over_time(wss_site_deploy_2fa_until{env=\"$env\"}[1h]), \"timer\", \"2FA resterend\")"
+          "expr": "label_set(1000 * (time() - last_over_time(wss_site_hk_state_age_s{env=~\"$env\"}[1h])), \"timer\", \"Housekeeping\") or label_set(1000 * ((last_over_time(wss_site_deploy_2fa_until{env=~\"$env\"}[1h]) > 0) - 10800), \"timer\", \"2FA unlocked\") or label_set(1000 * last_over_time(wss_site_deploy_2fa_until{env=~\"$env\"}[1h]), \"timer\", \"2FA resterend\")"
         }
       ],
       "transformations": [
@@ -1406,11 +1406,70 @@
             "type": "prometheus",
             "uid": "metrics"
           },
-          "expr": "last_over_time(wss_site_deploy_2fa_unlocked{env=\"$env\"}[1h])",
+          "expr": "last_over_time(wss_site_deploy_2fa_unlocked{env=~\"$env\"}[1h])",
           "refId": "A",
           "instant": true
         }
       ]
+    },
+    {
+      "id": 27,
+      "type": "stat",
+      "title": "Events (full)",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 4,
+        "y": 0
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum(count_over_time({job=\"site-app\", env=\"full_site\"}[$__range]))",
+          "refId": "A",
+          "queryType": "instant"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none",
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      }
     }
   ]
 }
