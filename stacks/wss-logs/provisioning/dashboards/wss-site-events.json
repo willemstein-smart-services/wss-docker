@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 24,
+  "version": 25,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -291,7 +291,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "topk(4, sum by (level) (count_over_time({job=\"site-app\", env=\"$env\"}[$__interval])))",
+          "expr": "sum by (level) (count_over_time({job=\"site-app\", env=\"$env\"}[$__interval]))",
           "refId": "A",
           "queryType": "range",
           "legendFormat": "{{level}}"
@@ -318,9 +318,8 @@
       },
       "options": {
         "legend": {
-          "displayMode": "list",
-          "calcs": [],
-          "placement": "bottom"
+          "displayMode": "hidden",
+          "calcs": []
         },
         "tooltip": {
           "mode": "multi",
@@ -608,7 +607,7 @@
           },
           "refId": "A",
           "queryType": "range",
-          "expr": "topk(4, sum by (event) (count_over_time({job=\"site-app\", env=\"$env\"} | regexp `\\d{8} \\d{2}:\\d{2}:\\d{2} - \\S+ - (?:(?:alert|crit|err|warn|notice|info|debug) - )?(?P<event>[A-Z0-9_]+)`[$__interval])))",
+          "expr": "topk(10, sum by (event) (count_over_time({job=\"site-app\", env=\"$env\"} | regexp `\\d{8} \\d{2}:\\d{2}:\\d{2} - \\S+ - (?:(?:alert|crit|err|warn|notice|info|debug) - )?(?P<event>[A-Z0-9_]+)`[$__interval])))",
           "legendFormat": "{{event}}"
         }
       ],
@@ -633,9 +632,8 @@
       },
       "options": {
         "legend": {
-          "displayMode": "list",
-          "calcs": [],
-          "placement": "bottom"
+          "displayMode": "hidden",
+          "calcs": []
         },
         "tooltip": {
           "mode": "multi",
@@ -665,7 +663,7 @@
           },
           "refId": "A",
           "queryType": "range",
-          "expr": "topk(4, sum by (ip) (count_over_time({job=\"site-app\", env=\"$env\"} | regexp `\\d{8} \\d{2}:\\d{2}:\\d{2} - (?P<ip>\\S+)`[$__interval])))",
+          "expr": "topk(10, sum by (ip) (count_over_time({job=\"site-app\", env=\"$env\"} | regexp `\\d{8} \\d{2}:\\d{2}:\\d{2} - (?P<ip>\\S+)`[$__interval])))",
           "legendFormat": "{{ip}}"
         }
       ],
@@ -690,9 +688,8 @@
       },
       "options": {
         "legend": {
-          "displayMode": "list",
-          "calcs": [],
-          "placement": "bottom"
+          "displayMode": "hidden",
+          "calcs": []
         },
         "tooltip": {
           "mode": "multi",
