@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 41,
+  "version": 42,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -1229,18 +1229,6 @@
                 "value": 90
               }
             ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Tijd"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "datetime:DD-MM HH:mm:ss"
-              }
-            ]
           }
         ]
       },
@@ -1317,6 +1305,18 @@
                 "targetField": "Tijd",
                 "destinationType": "time",
                 "inputFormat": "unixms"
+              }
+            ]
+          }
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "targetField": "Tijd",
+                "destinationType": "string",
+                "dateFormat": "DD-MM HH:mm:ss"
               }
             ]
           }
