@@ -22,3 +22,6 @@ apis/quotas          # Grafana interne quota-API 5xx chatter
 has timestamp too old   # Loki reject op verlopen/gedupliceerde pushes (replay na restart, zelfde familie als 'entry too far behind')
 ingestion rate limit exceeded  # Loki distributor rate-limit bursts (interne Loki-ruis)
 no retries left       # Alloy dropt batches rond Loki-restart/overload ('final error sending batch')
+Parse Error: Header overflow  # homarr2 ping/HTTP-client artifact (190x/5u) — Node parse-error op app-health checks
+cleaning up inactive secure values  # Grafana interne secure-values cleanup job faalt op sqlite-lock (~19x/10u)
+use of closed network connection   # Grafana->Loki query-cancel (client weg): 'read tcp ... closed' familie
