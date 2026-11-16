@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 55,
+  "version": 56,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -87,18 +87,31 @@
   },
   "panels": [
     {
-      "id": 1,
+      "id": 100,
+      "type": "row",
+      "title": "LIVE",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 1
+      },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 101,
       "type": "stat",
-      "title": "Events (test)",
+      "title": "Events",
       "datasource": {
         "type": "loki",
         "uid": "loki"
       },
       "gridPos": {
-        "h": 5,
-        "w": 4,
         "x": 0,
-        "y": 0
+        "y": 1,
+        "w": 3,
+        "h": 4
       },
       "targets": [
         {
@@ -106,7 +119,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum(count_over_time({job=\"site-app\", env=\"test_env\"}[$__range]))",
+          "expr": "sum(count_over_time({job=\"site-app\", env=\"full_site\"}[$__range]))",
           "refId": "A",
           "queryType": "instant"
         }
@@ -146,7 +159,7 @@
       }
     },
     {
-      "id": 2,
+      "id": 102,
       "type": "stat",
       "title": "Errors & alerts",
       "datasource": {
@@ -154,10 +167,10 @@
         "uid": "loki"
       },
       "gridPos": {
-        "h": 5,
-        "w": 8,
-        "x": 8,
-        "y": 0
+        "x": 3,
+        "y": 1,
+        "w": 3,
+        "h": 4
       },
       "targets": [
         {
@@ -165,7 +178,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum(count_over_time({job=\"site-app\", env=~\"$env\", level=~\"err|crit|alert\"}[$__range]))",
+          "expr": "sum(count_over_time({job=\"site-app\", env=\"full_site\", level=~\"err|crit|alert\"}[$__range]))",
           "refId": "A",
           "queryType": "instant"
         }
@@ -213,7 +226,7 @@
       }
     },
     {
-      "id": 3,
+      "id": 103,
       "type": "stat",
       "title": "Unieke IPs",
       "datasource": {
@@ -221,10 +234,10 @@
         "uid": "loki"
       },
       "gridPos": {
-        "h": 5,
-        "w": 8,
-        "x": 16,
-        "y": 0
+        "x": 6,
+        "y": 1,
+        "w": 3,
+        "h": 4
       },
       "targets": [
         {
@@ -232,7 +245,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "count(count by (ip) (count_over_time({job=\"site-app\", env=~\"$env\"} | regexp `\\d{8} \\d{2}:\\d{2}:\\d{2} - (?P<ip>\\S+)`[$__range])))",
+          "expr": "count(count by (ip) (count_over_time({job=\"site-app\", env=\"full_site\"} | regexp `\\d{8} \\d{2}:\\d{2}:\\d{2} - (?P<ip>\\S+)`[$__range])))",
           "refId": "A",
           "queryType": "instant"
         }
@@ -272,6 +285,1053 @@
       }
     },
     {
+      "id": 104,
+      "type": "stat",
+      "title": "Klanten",
+      "gridPos": {
+        "x": 9,
+        "y": 1,
+        "w": 3,
+        "h": 4
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "metrics"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "metrics"
+          },
+          "expr": "last_over_time(wss_site_customers{env=\"full_site\"}[1h])",
+          "refId": "A",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "id": 105,
+      "type": "stat",
+      "title": "Contracten",
+      "gridPos": {
+        "x": 12,
+        "y": 1,
+        "w": 3,
+        "h": 4
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "metrics"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "metrics"
+          },
+          "expr": "last_over_time(wss_site_contracts{env=\"full_site\"}[1h])",
+          "refId": "A",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "id": 106,
+      "type": "stat",
+      "title": "Tickets open",
+      "gridPos": {
+        "x": 15,
+        "y": 1,
+        "w": 3,
+        "h": 4
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "metrics"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "metrics"
+          },
+          "expr": "last_over_time(wss_site_tickets_open{env=\"full_site\"}[1h])",
+          "refId": "A",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "id": 107,
+      "type": "stat",
+      "title": "Facturen",
+      "gridPos": {
+        "x": 18,
+        "y": 1,
+        "w": 3,
+        "h": 4
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "metrics"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "metrics"
+          },
+          "expr": "last_over_time(wss_site_invoices{env=\"full_site\"}[1h])",
+          "refId": "A",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "id": 108,
+      "type": "stat",
+      "title": "Deploy-2FA",
+      "gridPos": {
+        "x": 21,
+        "y": 1,
+        "w": 3,
+        "h": 4
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "metrics"
+      },
+      "description": "0=LOCKED, 1=UNLOCKED — uit status-endpoint",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "LOCKED",
+                  "color": "green"
+                },
+                "1": {
+                  "text": "UNLOCKED",
+                  "color": "red"
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "metrics"
+          },
+          "expr": "last_over_time(wss_site_deploy_2fa_unlocked{env=\"full_site\"}[1h])",
+          "refId": "A",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "id": 200,
+      "type": "row",
+      "title": "TEST",
+      "gridPos": {
+        "x": 0,
+        "y": 5,
+        "w": 24,
+        "h": 1
+      },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 201,
+      "type": "stat",
+      "title": "Events",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 6,
+        "w": 3,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum(count_over_time({job=\"site-app\", env=\"test_env\"}[$__range]))",
+          "refId": "A",
+          "queryType": "instant"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none",
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 202,
+      "type": "stat",
+      "title": "Errors & alerts",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 3,
+        "y": 6,
+        "w": 3,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum(count_over_time({job=\"site-app\", env=\"test_env\", level=~\"err|crit|alert\"}[$__range]))",
+          "refId": "A",
+          "queryType": "instant"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 20
+              }
+            ]
+          },
+          "unit": "none",
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 203,
+      "type": "stat",
+      "title": "Unieke IPs",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 6,
+        "y": 6,
+        "w": 3,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "count(count by (ip) (count_over_time({job=\"site-app\", env=\"test_env\"} | regexp `\\d{8} \\d{2}:\\d{2}:\\d{2} - (?P<ip>\\S+)`[$__range])))",
+          "refId": "A",
+          "queryType": "instant"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "purple",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none",
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 204,
+      "type": "stat",
+      "title": "Klanten",
+      "gridPos": {
+        "x": 9,
+        "y": 6,
+        "w": 3,
+        "h": 4
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "metrics"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "metrics"
+          },
+          "expr": "last_over_time(wss_site_customers{env=\"test_env\"}[1h])",
+          "refId": "A",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "id": 205,
+      "type": "stat",
+      "title": "Contracten",
+      "gridPos": {
+        "x": 12,
+        "y": 6,
+        "w": 3,
+        "h": 4
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "metrics"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "metrics"
+          },
+          "expr": "last_over_time(wss_site_contracts{env=\"test_env\"}[1h])",
+          "refId": "A",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "id": 206,
+      "type": "stat",
+      "title": "Tickets open",
+      "gridPos": {
+        "x": 15,
+        "y": 6,
+        "w": 3,
+        "h": 4
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "metrics"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "metrics"
+          },
+          "expr": "last_over_time(wss_site_tickets_open{env=\"test_env\"}[1h])",
+          "refId": "A",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "id": 207,
+      "type": "stat",
+      "title": "Facturen",
+      "gridPos": {
+        "x": 18,
+        "y": 6,
+        "w": 3,
+        "h": 4
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "metrics"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "metrics"
+          },
+          "expr": "last_over_time(wss_site_invoices{env=\"test_env\"}[1h])",
+          "refId": "A",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "id": 208,
+      "type": "stat",
+      "title": "Deploy-2FA",
+      "gridPos": {
+        "x": 21,
+        "y": 6,
+        "w": 3,
+        "h": 4
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "metrics"
+      },
+      "description": "0=LOCKED, 1=UNLOCKED — uit status-endpoint",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "LOCKED",
+                  "color": "green"
+                },
+                "1": {
+                  "text": "UNLOCKED",
+                  "color": "red"
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "metrics"
+          },
+          "expr": "last_over_time(wss_site_deploy_2fa_unlocked{env=\"test_env\"}[1h])",
+          "refId": "A",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "type": "table",
+      "title": "Timers (housekeeping / deploy-2FA)",
+      "gridPos": {
+        "x": 0,
+        "y": 10,
+        "w": 24,
+        "h": 4
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "metrics"
+      },
+      "description": "Proof-of-life timers uit het status-endpoint (poll elke 15 min; waarden iets vertraagd)",
+      "options": {
+        "showHeader": false,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "sortBy": [
+          {
+            "displayName": "Timer",
+            "desc": false
+          }
+        ]
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false,
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Waarde"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "suffix:Mins"
+              },
+              {
+                "id": "custom.width",
+                "value": 90
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "-999999999999": {
+                        "text": "n/a",
+                        "index": 0
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Tijd"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 110
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "special",
+                    "options": {
+                      "match": "null",
+                      "result": {
+                        "text": "n/a",
+                        "index": 0
+                      }
+                    }
+                  },
+                  {
+                    "type": "special",
+                    "options": {
+                      "match": "empty",
+                      "result": {
+                        "text": "n/a",
+                        "index": 1
+                      }
+                    }
+                  },
+                  {
+                    "type": "special",
+                    "options": {
+                      "match": "nan",
+                      "result": {
+                        "text": "n/a",
+                        "index": 2
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "metrics"
+          },
+          "refId": "A",
+          "instant": true,
+          "format": "table",
+          "expr": "(label_set(round(((0 - (last_over_time(wss_site_hk_state_age_s{env=~\".*\"}[1h]) >= 0)) / 60)), \"timer\", \"Housekeeping\") default label_set(vector(-999999999999), \"timer\", \"Housekeeping\")) or (label_set(round((((last_over_time(wss_site_deploy_2fa_until{env=~\".*\"}[1h]) > 0) - 10800) - time()) / 60), \"timer\", \"2FA unlocked\") default label_set(vector(-999999999999), \"timer\", \"2FA unlocked\")) or (label_set(round(((last_over_time(wss_site_deploy_2fa_until{env=~\".*\"}[1h]) > 0) - time()) / 60), \"timer\", \"2FA resterend\") default label_set(vector(-999999999999), \"timer\", \"2FA resterend\"))"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "metrics"
+          },
+          "refId": "B",
+          "instant": true,
+          "format": "table",
+          "expr": "label_set(1000 * (time() - (last_over_time(wss_site_hk_state_age_s{env=~\".*\"}[1h]) >= 0)), \"timer\", \"Housekeeping\") or label_set(1000 * ((last_over_time(wss_site_deploy_2fa_until{env=~\".*\"}[1h]) > 0) - 10800), \"timer\", \"2FA unlocked\") or label_set(1000 * last_over_time(wss_site_deploy_2fa_until{env=~\".*\"}[1h]), \"timer\", \"2FA resterend\")"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "timer",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Time 1": true,
+              "Time 2": true,
+              "Time 3": true,
+              "env": true,
+              "env 1": true,
+              "env 2": true,
+              "env 3": true,
+              "__name__": true,
+              "__name__ 1": true,
+              "__name__ 2": true,
+              "job": true,
+              "instance": true
+            },
+            "renameByName": {
+              "timer": "Timer",
+              "Value A": "Waarde",
+              "Value B": "Tijd",
+              "Value #A": "Waarde",
+              "Value #B": "Tijd",
+              "Value (A)": "Waarde",
+              "Value (B)": "Tijd",
+              "Value 1": "Waarde",
+              "Value 2": "Tijd",
+              "Value": "Waarde"
+            },
+            "indexByName": {
+              "timer": 0,
+              "Value B": 1,
+              "Value #B": 1,
+              "Value (B)": 1,
+              "Value 2": 1,
+              "Tijd": 1,
+              "Value A": 2,
+              "Value #A": 2,
+              "Value (A)": 2,
+              "Value 1": 2,
+              "Waarde": 2,
+              "Value": 2
+            }
+          }
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "targetField": "Tijd",
+                "destinationType": "time",
+                "inputFormat": "unixms"
+              }
+            ]
+          }
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "targetField": "Tijd",
+                "destinationType": "string",
+                "dateFormat": "DD-MM HH:mm:ss"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
       "id": 4,
       "type": "timeseries",
       "title": "Volume per severity",
@@ -280,10 +1340,10 @@
         "uid": "loki"
       },
       "gridPos": {
-        "h": 8,
+        "x": 0,
+        "y": 14,
         "w": 8,
-        "x": 8,
-        "y": 10
+        "h": 8
       },
       "targets": [
         {
@@ -328,15 +1388,127 @@
       }
     },
     {
+      "id": 8,
+      "type": "timeseries",
+      "title": "Volume per event-type",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 14,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "refId": "A",
+          "queryType": "range",
+          "expr": "topk(10, sum by (event) (count_over_time({job=\"site-app\", env=~\"$env\"} | regexp `\\d{8} \\d{2}:\\d{2}:\\d{2} - \\S+ - (?:(?:alert|crit|err|warn|notice|info|debug) - )?(?P<event>[A-Z0-9_]+)`[$__interval])))",
+          "legendFormat": "{{event}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 70,
+            "lineWidth": 1,
+            "stacking": {
+              "mode": "normal"
+            },
+            "showPoints": "never"
+          },
+          "unit": "none",
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "hidden",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "type": "timeseries",
+      "title": "Volume per src IP",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 14,
+        "w": 8,
+        "h": 8
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "refId": "A",
+          "queryType": "range",
+          "expr": "topk(10, sum by (ip) (count_over_time({job=\"site-app\", env=~\"$env\"} | regexp `\\d{8} \\d{2}:\\d{2}:\\d{2} - (?P<ip>\\S+)`[$__interval])))",
+          "legendFormat": "{{ip}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 70,
+            "lineWidth": 1,
+            "stacking": {
+              "mode": "normal"
+            },
+            "showPoints": "never"
+          },
+          "unit": "none",
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "hidden",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
       "id": 5,
       "type": "table",
       "title": "Git / Deploy events",
       "description": "Deploy-pijplijn als tabel: 2FA lock/unlock + deploy-notifications. Volledige commit-msg staat in de laatste kolom (hover voor volledige tekst).",
       "gridPos": {
-        "h": 9,
-        "w": 12,
         "x": 0,
-        "y": 18
+        "y": 22,
+        "w": 12,
+        "h": 9
       },
       "datasource": {
         "type": "loki",
@@ -550,127 +1722,15 @@
       ]
     },
     {
-      "id": 8,
-      "type": "timeseries",
-      "title": "Volume per event-type",
-      "datasource": {
-        "type": "loki",
-        "uid": "loki"
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 10
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "loki"
-          },
-          "refId": "A",
-          "queryType": "range",
-          "expr": "topk(10, sum by (event) (count_over_time({job=\"site-app\", env=~\"$env\"} | regexp `\\d{8} \\d{2}:\\d{2}:\\d{2} - \\S+ - (?:(?:alert|crit|err|warn|notice|info|debug) - )?(?P<event>[A-Z0-9_]+)`[$__interval])))",
-          "legendFormat": "{{event}}"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "drawStyle": "bars",
-            "fillOpacity": 70,
-            "lineWidth": 1,
-            "stacking": {
-              "mode": "normal"
-            },
-            "showPoints": "never"
-          },
-          "unit": "none",
-          "mappings": []
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "hidden",
-          "calcs": []
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      }
-    },
-    {
-      "id": 9,
-      "type": "timeseries",
-      "title": "Volume per src IP",
-      "datasource": {
-        "type": "loki",
-        "uid": "loki"
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 10
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "loki"
-          },
-          "refId": "A",
-          "queryType": "range",
-          "expr": "topk(10, sum by (ip) (count_over_time({job=\"site-app\", env=~\"$env\"} | regexp `\\d{8} \\d{2}:\\d{2}:\\d{2} - (?P<ip>\\S+)`[$__interval])))",
-          "legendFormat": "{{ip}}"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "drawStyle": "bars",
-            "fillOpacity": 70,
-            "lineWidth": 1,
-            "stacking": {
-              "mode": "normal"
-            },
-            "showPoints": "never"
-          },
-          "unit": "none",
-          "mappings": []
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "hidden",
-          "calcs": []
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      }
-    },
-    {
       "id": 10,
       "type": "table",
       "title": "Alle events",
       "description": "Alle site-events als gestructureerde tabel (zelfde parsing als Git/Deploy-kaart): Datum, Sev, IP, Event + Details (JSON uit { } als key: value). Filtert mee op $env/$level/$zoek.",
       "gridPos": {
-        "h": 9,
-        "w": 12,
         "x": 12,
-        "y": 18
+        "y": 22,
+        "w": 12,
+        "h": 9
       },
       "datasource": {
         "type": "loki",
@@ -841,10 +1901,10 @@
       "title": "Errors & alerts + Alle events (raw)",
       "collapsed": true,
       "gridPos": {
-        "h": 1,
-        "w": 24,
         "x": 0,
-        "y": 27
+        "y": 31,
+        "w": 24,
+        "h": 1
       },
       "panels": [
         {
@@ -920,605 +1980,6 @@
           }
         }
       ]
-    },
-    {
-      "id": 20,
-      "type": "stat",
-      "title": "Klanten",
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 0,
-        "y": 5
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "metrics"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "blue",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "metrics"
-          },
-          "expr": "last_over_time(wss_site_customers{env=~\"$env\"}[1h])",
-          "refId": "A",
-          "instant": true
-        }
-      ]
-    },
-    {
-      "id": 21,
-      "type": "stat",
-      "title": "Contracten",
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 4,
-        "y": 5
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "metrics"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "blue",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "metrics"
-          },
-          "expr": "last_over_time(wss_site_contracts{env=~\"$env\"}[1h])",
-          "refId": "A",
-          "instant": true
-        }
-      ]
-    },
-    {
-      "id": 22,
-      "type": "stat",
-      "title": "Tickets open",
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 8,
-        "y": 5
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "metrics"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "blue",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "metrics"
-          },
-          "expr": "last_over_time(wss_site_tickets_open{env=~\"$env\"}[1h])",
-          "refId": "A",
-          "instant": true
-        }
-      ]
-    },
-    {
-      "id": 23,
-      "type": "stat",
-      "title": "Facturen",
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 12,
-        "y": 5
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "metrics"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "blue",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "metrics"
-          },
-          "expr": "last_over_time(wss_site_invoices{env=~\"$env\"}[1h])",
-          "refId": "A",
-          "instant": true
-        }
-      ]
-    },
-    {
-      "id": 26,
-      "type": "table",
-      "title": "TIMER",
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 20,
-        "y": 5
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "metrics"
-      },
-      "description": "Proof-of-life timers uit het status-endpoint (poll elke 15 min; waarden iets vertraagd)",
-      "options": {
-        "showHeader": false,
-        "cellHeight": "sm",
-        "footer": {
-          "show": false
-        },
-        "sortBy": [
-          {
-            "displayName": "Timer",
-            "desc": false
-          }
-        ]
-      },
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false,
-            "filterable": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "blue",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Waarde"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "suffix:Mins"
-              },
-              {
-                "id": "custom.width",
-                "value": 90
-              },
-              {
-                "id": "mappings",
-                "value": [
-                  {
-                    "type": "value",
-                    "options": {
-                      "-999999999999": {
-                        "text": "n/a",
-                        "index": 0
-                      }
-                    }
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Tijd"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 110
-              },
-              {
-                "id": "mappings",
-                "value": [
-                  {
-                    "type": "special",
-                    "options": {
-                      "match": "null",
-                      "result": {
-                        "text": "n/a",
-                        "index": 0
-                      }
-                    }
-                  },
-                  {
-                    "type": "special",
-                    "options": {
-                      "match": "empty",
-                      "result": {
-                        "text": "n/a",
-                        "index": 1
-                      }
-                    }
-                  },
-                  {
-                    "type": "special",
-                    "options": {
-                      "match": "nan",
-                      "result": {
-                        "text": "n/a",
-                        "index": 2
-                      }
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "metrics"
-          },
-          "refId": "A",
-          "instant": true,
-          "format": "table",
-          "expr": "(label_set(round(((0 - (last_over_time(wss_site_hk_state_age_s{env=~\"$env\"}[1h]) >= 0)) / 60)), \"timer\", \"Housekeeping\") default label_set(vector(-999999999999), \"timer\", \"Housekeeping\")) or (label_set(round((((last_over_time(wss_site_deploy_2fa_until{env=~\"$env\"}[1h]) > 0) - 10800) - time()) / 60), \"timer\", \"2FA unlocked\") default label_set(vector(-999999999999), \"timer\", \"2FA unlocked\")) or (label_set(round(((last_over_time(wss_site_deploy_2fa_until{env=~\"$env\"}[1h]) > 0) - time()) / 60), \"timer\", \"2FA resterend\") default label_set(vector(-999999999999), \"timer\", \"2FA resterend\"))"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "metrics"
-          },
-          "refId": "B",
-          "instant": true,
-          "format": "table",
-          "expr": "label_set(1000 * (time() - (last_over_time(wss_site_hk_state_age_s{env=~\"$env\"}[1h]) >= 0)), \"timer\", \"Housekeeping\") or label_set(1000 * ((last_over_time(wss_site_deploy_2fa_until{env=~\"$env\"}[1h]) > 0) - 10800), \"timer\", \"2FA unlocked\") or label_set(1000 * last_over_time(wss_site_deploy_2fa_until{env=~\"$env\"}[1h]), \"timer\", \"2FA resterend\")"
-        }
-      ],
-      "transformations": [
-        {
-          "id": "joinByField",
-          "options": {
-            "byField": "timer",
-            "mode": "outer"
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Time": true,
-              "Time 1": true,
-              "Time 2": true,
-              "Time 3": true,
-              "env": true,
-              "env 1": true,
-              "env 2": true,
-              "env 3": true,
-              "__name__": true,
-              "__name__ 1": true,
-              "__name__ 2": true,
-              "job": true,
-              "instance": true
-            },
-            "renameByName": {
-              "timer": "Timer",
-              "Value A": "Waarde",
-              "Value B": "Tijd",
-              "Value #A": "Waarde",
-              "Value #B": "Tijd",
-              "Value (A)": "Waarde",
-              "Value (B)": "Tijd",
-              "Value 1": "Waarde",
-              "Value 2": "Tijd",
-              "Value": "Waarde"
-            },
-            "indexByName": {
-              "timer": 0,
-              "Value B": 1,
-              "Value #B": 1,
-              "Value (B)": 1,
-              "Value 2": 1,
-              "Tijd": 1,
-              "Value A": 2,
-              "Value #A": 2,
-              "Value (A)": 2,
-              "Value 1": 2,
-              "Waarde": 2,
-              "Value": 2
-            }
-          }
-        },
-        {
-          "id": "convertFieldType",
-          "options": {
-            "conversions": [
-              {
-                "targetField": "Tijd",
-                "destinationType": "time",
-                "inputFormat": "unixms"
-              }
-            ]
-          }
-        },
-        {
-          "id": "convertFieldType",
-          "options": {
-            "conversions": [
-              {
-                "targetField": "Tijd",
-                "destinationType": "string",
-                "dateFormat": "DD-MM HH:mm:ss"
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": 24,
-      "type": "stat",
-      "title": "Deploy-2FA",
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 16,
-        "y": 5
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "metrics"
-      },
-      "description": "0=LOCKED, 1=UNLOCKED — uit status-endpoint",
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "LOCKED",
-                  "color": "green"
-                },
-                "1": {
-                  "text": "UNLOCKED",
-                  "color": "red"
-                }
-              }
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 1
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "colorMode": "background",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "metrics"
-          },
-          "expr": "last_over_time(wss_site_deploy_2fa_unlocked{env=~\"$env\"}[1h])",
-          "refId": "A",
-          "instant": true
-        }
-      ]
-    },
-    {
-      "id": 27,
-      "type": "stat",
-      "title": "Events (full)",
-      "datasource": {
-        "type": "loki",
-        "uid": "loki"
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 4,
-        "y": 0
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "loki"
-          },
-          "expr": "sum(count_over_time({job=\"site-app\", env=\"full_site\"}[$__range]))",
-          "refId": "A",
-          "queryType": "instant"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "blue",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none",
-          "mappings": []
-        },
-        "overrides": []
-      },
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      }
     }
   ]
 }
