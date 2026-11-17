@@ -25,3 +25,6 @@ no retries left       # Alloy dropt batches rond Loki-restart/overload ('final e
 Parse Error: Header overflow  # homarr2 ping/HTTP-client artifact (190x/5u) — Node parse-error op app-health checks
 cleaning up inactive secure values  # Grafana interne secure-values cleanup job faalt op sqlite-lock (~19x/10u)
 use of closed network connection   # Grafana->Loki query-cancel (client weg): 'read tcp ... closed' familie
+throwGeneralAxiosError   # uptime-kuma axios stack-trace frames (elke mislukte notificatie -> meerdere 'at ...notification-provider.js' regels; duplicaat-push)
+Cannot send notification to   # uptime-kuma meldt mislukte aflevering via Pushover/webhook — monitoring-artifact; echte down-signalen blijven via site-app KUMA_DOWN zichtbaar
+EAI_AGAIN api.pushover.net   # uptime-kuma DNS-fail op de Pushover-pushpath; gescoped op pushover zodat echte DNS-ruis naar andere hosts zichtbaar blijft
