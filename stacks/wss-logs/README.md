@@ -12,11 +12,11 @@ Centrale log-stack op de NAS. Drie officiële images, geen eigen build.
 ## Eenmalig op de NAS
 
 ```sh
-mkdir -p /volume1/docker/wss-grafana/{grafana,loki,alloy,syslog-ng}
+mkdir -p /volume1/docker/wss-grafana/{grafana,loki,alloy}
+mkdir -p /volume1/docker/devin/home/logs/syslog-ng
 chmod 777 /volume1/docker/wss-grafana/grafana \
           /volume1/docker/wss-grafana/loki \
-          /volume1/docker/wss-grafana/alloy \
-          /volume1/docker/wss-grafana/syslog-ng
+          /volume1/docker/wss-grafana/alloy
 ```
 
 In Portainer: nieuwe stack `wss-logs`, inhoud van `docker-compose.yml`
@@ -38,10 +38,11 @@ plakken, `GF_SECURITY_ADMIN_PASSWORD` invullen, deployen.
   level=..}`. Dashboard "WSS Netwerk Syslog" toont volume/warn+ per
   host, top-program's en de ruwe feed.
   Wijs op elk apparaat (router, AP, andere hosts) remote-syslog naar
-  `192.168.10.69` poort `514`.
-  NB: dagelijkse files groeien op `/volume1/docker/wss-grafana/
-  syslog-ng` — ruim oude files desgewenst handmatig op (Loki bewaart
-  de regels).
+  `192.168.10.69` poort `514`. De NAS zelf: DSM Log Center →
+  forwarding naar dezelfde poort.
+  Files staan op `/volume1/docker/devin/home/logs/syslog-ng` (onder de
+  devin-logvolume) — housekeeping ruimt dagfiles >90d op, gelijk aan
+  de Loki-retentie.
 - **Grafana** (.65) laadt datasource + dashboard automatisch via
   `provisioning/` — staat in deze repo, wijzigingen via git.
 

@@ -17,8 +17,9 @@
 #     JSON-files -> Alloy -> Loki (job="syslog")
 #
 # NAS-dirs (eenmalig aanmaken):
-#   /volume1/docker/wss-grafana/{grafana,loki,alloy,syslog-ng}
-#   (chmod 777 of chown op resp. 472 / 10001 / root / root)
+#   /volume1/docker/wss-grafana/{grafana,loki,alloy}
+#   /volume1/docker/devin/home/logs/syslog-ng   (syslog-output,
+#   onder devin-logvolume -> housekeeping ruimt >90d op)
 # Config + provisioning staan in deze repo-checkout — die ligt
 # via het devin-home-volume al op de NAS.
 # ============================================================
@@ -104,13 +105,17 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    environment:
+      TZ: Europe/Amsterdam
     # Ontvangt netwerk-syslog op UDP+TCP :514 via eigen LAN-IP (.69,
     # zelfde macvlan-net als de rest — apparaten sturen rechtstreeks).
     # Schrijft JSON-regels naar /var/log/syslog-ng/syslog-<datum>.log;
     # Alloy tait die map read-only.
     volumes:
       - /volume1/docker/devin/home/workspace/wss-docker/stacks/wss-logs/config/syslog-ng.conf:/etc/syslog-ng/syslog-ng.conf:ro
-      - /volume1/docker/wss-grafana/syslog-ng:/var/log/syslog-ng
+      # output onder de devin-logvolume: housekeeping (devin-cron)
+      # ruimt files >90d op (= Loki-retentie)
+      - /volume1/docker/devin/home/logs/syslog-ng:/var/log/syslog-ng
     networks:
       docker_network:
         ipv4_address: 192.168.10.69
@@ -141,7 +146,7 @@ services:
       - /volume1/docker/devin/home/logs:/logsrc/wss:ro
       - /volume1/docker/wss-webserver/logs:/logsrc/webstack:ro
       - /volume1/docker/wss_crons_backups/hetzner/root:/logsrc/site:ro
-      - /volume1/docker/wss-grafana/syslog-ng:/logsrc/syslog:ro
+      - /volume1/docker/devin/home/logs/syslog-ng:/logsrc/syslog:ro
     networks:
       docker_network:
         ipv4_address: 192.168.10.67
