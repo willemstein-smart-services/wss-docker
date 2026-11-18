@@ -126,6 +126,22 @@ loki.process "syslog" {
 			program = "program",
 		}
 	}
+
+	// zigbee2mqtt is praatziek: info/debug droppen vóór Loki.
+	// Match op program én shost (z2m kan als host óf program
+	// binnenkomen); warn+ blijft gewoon zichtbaar.
+	stage.match {
+		selector = "{program=~\"(?i).*zigbee2mqtt.*\", level=~\"info|debug\"}"
+		stage.drop {
+			drop_counter_reason = "z2m_lowprio"
+		}
+	}
+	stage.match {
+		selector = "{shost=~\"(?i).*zigbee2mqtt.*\", level=~\"info|debug\"}"
+		stage.drop {
+			drop_counter_reason = "z2m_lowprio"
+		}
+	}
 }
 
 // ---------------------------------------------------------------
