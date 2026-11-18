@@ -87,7 +87,49 @@ loki.process "wss_files" {
 }
 
 // ---------------------------------------------------------------
-// 3) Metrics: Uptime Kuma /metrics -> VictoriaMetrics
+// 3) Netwerk-syslog: syslog-ng schrijft JSON-regels
+//    (/var/log/syslog-ng/syslog-<datum>.log -> /logsrc/syslog hier).
+//    LEVEL/HOST/PROGRAM komen al geparsed binnen -> labels.
+// ---------------------------------------------------------------
+local.file_match "syslog_logs" {
+	path_targets = [{__path__ = "/logsrc/syslog/*.log", job = "syslog"}]
+	sync_period  = "15s"
+}
+
+loki.source.file "syslog" {
+	targets    = local.file_match.syslog_logs.targets
+	forward_to = [loki.process.syslog.receiver]
+}
+
+loki.process "syslog" {
+	forward_to = [loki.write.default.receiver]
+
+	stage.json {
+		expressions = {
+			level_raw = "LEVEL",
+			shost     = "HOST",
+			program   = "PROGRAM",
+		}
+	}
+
+	// syslog-severity -> wss-level conventie (zelfde als site-app:
+	// crit|alert|err|warn|notice|info|debug). emerg telt als alert.
+	stage.template {
+		source   = "level"
+		template = `{{ $l := .level_raw | lower }}{{ if or (eq $l "emerg") (eq $l "panic") (eq $l "alert") }}alert{{ else if eq $l "crit" }}crit{{ else if or (eq $l "err") (eq $l "error") }}err{{ else if or (eq $l "warning") (eq $l "warn") }}warn{{ else if eq $l "notice" }}notice{{ else if eq $l "debug" }}debug{{ else }}info{{ end }}`
+	}
+
+	stage.labels {
+		values = {
+			level   = "level",
+			shost   = "shost",
+			program = "program",
+		}
+	}
+}
+
+// ---------------------------------------------------------------
+// 4) Metrics: Uptime Kuma /metrics -> VictoriaMetrics
 //    API-key via KUMA_API_KEY env (basic-auth password).
 // ---------------------------------------------------------------
 prometheus.scrape "kuma" {

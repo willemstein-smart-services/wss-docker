@@ -13,10 +13,12 @@
 #   - site-app logs via de 03:00-backup-mirror
 #     (test_env+full_site log/logging.php; dagvers, kan na een
 #     mirror-update duplicate regels geven)
+#   - netwerk-syslog via syslog-ng (192.168.10.69:514 udp/tcp) ->
+#     JSON-files -> Alloy -> Loki (job="syslog")
 #
 # NAS-dirs (eenmalig aanmaken):
-#   /volume1/docker/wss-grafana/{grafana,loki,alloy}  (chmod 777
-#   of chown op resp. 472 / 10001 / root)
+#   /volume1/docker/wss-grafana/{grafana,loki,alloy,syslog-ng}
+#   (chmod 777 of chown op resp. 472 / 10001 / root / root)
 # Config + provisioning staan in deze repo-checkout — die ligt
 # via het devin-home-volume al op de NAS.
 # ============================================================
@@ -90,6 +92,29 @@ services:
       docker_network:
         ipv4_address: 192.168.10.68
 
+  syslog:
+    image: balabit/syslog-ng:latest
+    pull_policy: always
+    container_name: wss-syslog
+    hostname: wss-syslog
+    restart: unless-stopped
+    # json-file logrotatie (AVG/opslag): max 3x10MB per container
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    # Ontvangt netwerk-syslog op UDP+TCP :514 via eigen LAN-IP (.69,
+    # zelfde macvlan-net als de rest — apparaten sturen rechtstreeks).
+    # Schrijft JSON-regels naar /var/log/syslog-ng/syslog-<datum>.log;
+    # Alloy tait die map read-only.
+    volumes:
+      - /volume1/docker/devin/home/workspace/wss-docker/stacks/wss-logs/config/syslog-ng.conf:/etc/syslog-ng/syslog-ng.conf:ro
+      - /volume1/docker/wss-grafana/syslog-ng:/var/log/syslog-ng
+    networks:
+      docker_network:
+        ipv4_address: 192.168.10.69
+
   alloy:
     image: grafana/alloy:latest
     pull_policy: always
@@ -116,6 +141,7 @@ services:
       - /volume1/docker/devin/home/logs:/logsrc/wss:ro
       - /volume1/docker/wss-webserver/logs:/logsrc/webstack:ro
       - /volume1/docker/wss_crons_backups/hetzner/root:/logsrc/site:ro
+      - /volume1/docker/wss-grafana/syslog-ng:/logsrc/syslog:ro
     networks:
       docker_network:
         ipv4_address: 192.168.10.67

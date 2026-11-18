@@ -7,14 +7,16 @@ Centrale log-stack op de NAS. Drie officiële images, geen eigen build.
 | Grafana | 192.168.10.65 | http://192.168.10.65:3000 (admin) |
 | Loki | 192.168.10.66 | intern (`wss-loki:3100`) |
 | Alloy | 192.168.10.67 | http://192.168.10.67:12345 (collector-UI) |
+| syslog-ng | 192.168.10.69 | UDP+TCP :514 — wijs hierheen op apparaten |
 
 ## Eenmalig op de NAS
 
 ```sh
-mkdir -p /volume1/docker/wss-grafana/{grafana,loki,alloy}
+mkdir -p /volume1/docker/wss-grafana/{grafana,loki,alloy,syslog-ng}
 chmod 777 /volume1/docker/wss-grafana/grafana \
           /volume1/docker/wss-grafana/loki \
-          /volume1/docker/wss-grafana/alloy
+          /volume1/docker/wss-grafana/alloy \
+          /volume1/docker/wss-grafana/syslog-ng
 ```
 
 In Portainer: nieuwe stack `wss-logs`, inhoud van `docker-compose.yml`
@@ -29,6 +31,17 @@ plakken, `GF_SECURITY_ADMIN_PASSWORD` invullen, deployen.
   SFTP-download van `log/logging.php`, alleen nieuwe regels worden
   direct naar Loki's push-API gestuurd (met originele timestamps).
 - **Loki** (.66) bewaart 90 dagen op `/volume1/docker/wss-grafana/loki`.
+- **syslog-ng** (.69) ontvangt netwerk-syslog (UDP+TCP 514) van apparaten
+  op het LAN en schrijft JSON-regels naar dagelijkse files
+  (`syslog-<datum>.log`). Alloy tait die map en parst LEVEL/HOST/
+  PROGRAM naar Loki-labels: `{job="syslog", shost=.., program=..,
+  level=..}`. Dashboard "WSS Netwerk Syslog" toont volume/warn+ per
+  host, top-program's en de ruwe feed.
+  Wijs op elk apparaat (router, AP, andere hosts) remote-syslog naar
+  `192.168.10.69` poort `514`.
+  NB: dagelijkse files groeien op `/volume1/docker/wss-grafana/
+  syslog-ng` — ruim oude files desgewenst handmatig op (Loki bewaart
+  de regels).
 - **Grafana** (.65) laadt datasource + dashboard automatisch via
   `provisioning/` — staat in deze repo, wijzigingen via git.
 
