@@ -194,9 +194,10 @@ loki.process "syslog" {
 	}
 	stage.labels {
 		values = {
-			fw_rule   = "fw_rule",
-			fw_proto  = "fw_proto",
-			fw_action = "fw_action",
+			fw_rule      = "fw_rule",
+			fw_proto     = "fw_proto",
+			fw_action    = "fw_action",
+			fw_rule_name = "fw_rule_name",
 		}
 	}
 	stage.structured_metadata {
@@ -211,7 +212,6 @@ loki.process "syslog" {
 			fw_ttl      = "fw_ttl",
 			fw_src_name  = "fw_src_name",
 			fw_dst_name  = "fw_dst_name",
-			fw_rule_name = "fw_rule_name",
 		}
 	}
 }
