@@ -154,7 +154,7 @@ loki.process "syslog" {
 	// gaan als structured metadata mee -> querybaar maar niet geïndexeerd.
 	stage.regex {
 		source     = "msg"
-		expression = `^\[(?P<fw_rule>[^\]]+)\](?P<fw_kv>.*)`
+		expression = `^\[(?P<fw_rule>[A-Z][A-Z_0-9]*-[0-9]+-[ARD])\](?P<fw_kv>.*)`
 	}
 	stage.logfmt {
 		source  = "fw_kv"

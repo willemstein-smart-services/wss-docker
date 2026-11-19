@@ -1,7 +1,7 @@
 {
   "uid": "wss-syslog",
   "title": "WSS Netwerk Syslog",
-  "version": 7,
+  "version": 8,
   "editable": true,
   "timezone": "Europe/Amsterdam",
   "refresh": "1m",
@@ -330,7 +330,7 @@
     {
       "id": 5,
       "type": "logs",
-      "title": "Syslog feed",
+      "title": "Syslog Feed (Filtered)",
       "datasource": {
         "type": "loki",
         "uid": "loki"
@@ -347,7 +347,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"syslog\", shost=~\"$shost\", program=~\"$program\", level=~\"$level\"} |~ \"$zoek\" | json | line_format `{{ .ISODATE }} {{ .HOST }} {{ .PROGRAM }}{{ if .PID }}[{{ .PID }}]{{ end }}: {{ .MSG }}`",
+          "expr": "{job=\"syslog\", shost=~\"$shost\", program=~\"$program\", level=~\"$level\", fw_rule=\"\"} |~ \"$zoek\" | json | line_format `{{ .ISODATE }} {{ .HOST }} {{ .PROGRAM }}{{ if .PID }}[{{ .PID }}]{{ end }}: {{ .MSG }}`",
           "refId": "A",
           "queryType": "range"
         }
@@ -386,7 +386,7 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
+        "w": 24,
         "x": 0,
         "y": 28
       },
