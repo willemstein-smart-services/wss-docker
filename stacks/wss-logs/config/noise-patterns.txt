@@ -30,3 +30,8 @@ Cannot send notification to   # uptime-kuma meldt mislukte aflevering via Pushov
 EAI_AGAIN api.pushover.net   # uptime-kuma DNS-fail op de Pushover-pushpath; gescoped op pushover zodat echte DNS-ruis naar andere hosts zichtbaar blijft
 database is locked   # Grafana SQLITE_BUSY-contention familie (~100x/24u): sqlstore.max-retries-reached retries in authn/ngalert/provisioning/bleve/ssosettings/cleanup — transient, herstelt elke cyclus (precedent: 'cleaning up inactive secure values')
 Failed to write gzipped response   # middleware.gzip client-abort/UI-artifact (~12-20x/24u, recurring): browser/proxy verbreekt tijdens gzip-write, geen app-impact
+
+# --- Syslog-side filters (wss-syslog.json, aparte familie van de docker-kaarten) ---
+# 'Syslog Feed (Filtered)' filtert óók:
+#   fw_rule=""                              # UniFi fw-regels hebben eigen paneel
+#   !~ "failed to decrypt the message"      # ubnt inform decrypt-retry (~10 min/AP) — cosmetisch, sessie herstelt (19-11)
