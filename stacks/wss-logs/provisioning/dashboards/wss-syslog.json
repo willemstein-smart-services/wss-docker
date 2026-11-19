@@ -1,16 +1,30 @@
 {
   "uid": "wss-syslog",
   "title": "WSS Netwerk Syslog",
-  "version": 2,
+  "version": 3,
   "editable": true,
   "timezone": "Europe/Amsterdam",
   "refresh": "1m",
-  "time": { "from": "now-24h", "to": "now" },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
   "templating": {
     "list": [
       {
-        "current": { "selected": true, "text": ["All"], "value": ["$__all"] },
-        "datasource": { "type": "loki", "uid": "loki" },
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "loki",
+          "uid": "loki"
+        },
         "includeAll": true,
         "allValue": ".*",
         "multi": true,
@@ -18,11 +32,26 @@
         "options": [],
         "refresh": 2,
         "type": "query",
-        "query": { "label": "shost", "stream": "{job=\"syslog\"}", "type": 1 }
+        "query": {
+          "label": "shost",
+          "stream": "{job=\"syslog\"}",
+          "type": 1
+        }
       },
       {
-        "current": { "selected": true, "text": ["All"], "value": ["$__all"] },
-        "datasource": { "type": "loki", "uid": "loki" },
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "loki",
+          "uid": "loki"
+        },
         "includeAll": true,
         "allValue": ".*",
         "multi": true,
@@ -30,11 +59,26 @@
         "options": [],
         "refresh": 2,
         "type": "query",
-        "query": { "label": "program", "stream": "{job=\"syslog\"}", "type": 1 }
+        "query": {
+          "label": "program",
+          "stream": "{job=\"syslog\"}",
+          "type": 1
+        }
       },
       {
-        "current": { "selected": true, "text": ["All"], "value": ["$__all"] },
-        "datasource": { "type": "loki", "uid": "loki" },
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "loki",
+          "uid": "loki"
+        },
         "includeAll": true,
         "allValue": ".*",
         "multi": true,
@@ -42,10 +86,18 @@
         "options": [],
         "refresh": 2,
         "type": "query",
-        "query": { "label": "level", "stream": "{job=\"syslog\"}", "type": 1 }
+        "query": {
+          "label": "level",
+          "stream": "{job=\"syslog\"}",
+          "type": 1
+        }
       },
       {
-        "current": { "selected": false, "text": "", "value": "" },
+        "current": {
+          "selected": false,
+          "text": "",
+          "value": ""
+        },
         "name": "zoek",
         "options": [],
         "query": "",
@@ -58,11 +110,22 @@
       "id": 1,
       "type": "timeseries",
       "title": "Syslog-regels per host",
-      "datasource": { "type": "loki", "uid": "loki" },
-      "gridPos": { "h": 8, "w": 14, "x": 0, "y": 0 },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 14,
+        "x": 0,
+        "y": 0
+      },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
           "expr": "sum by (shost) (count_over_time({job=\"syslog\", shost=~\"$shost\"}[$__interval]))",
           "refId": "A",
           "queryType": "range",
@@ -71,27 +134,56 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": { "drawStyle": "bars", "fillOpacity": 70, "stacking": { "mode": "normal" }, "showPoints": "never" },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 70,
+            "stacking": {
+              "mode": "normal"
+            },
+            "showPoints": "never"
+          },
           "unit": "none",
           "mappings": []
         },
         "overrides": []
       },
       "options": {
-        "legend": { "displayMode": "table", "placement": "right", "calcs": ["sum"] },
-        "tooltip": { "mode": "multi", "sort": "desc" }
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": [
+            "sum"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
       }
     },
     {
       "id": 2,
       "type": "timeseries",
       "title": "Warn+ per host (alert|crit|err|warn)",
-      "datasource": { "type": "loki", "uid": "loki" },
-      "gridPos": { "h": 8, "w": 10, "x": 14, "y": 0 },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 10,
+        "x": 14,
+        "y": 0
+      },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
           "expr": "sum by (shost) (count_over_time({job=\"syslog\", shost=~\"$shost\", level=~\"alert|crit|err|warn\"}[$__interval]))",
           "refId": "A",
           "queryType": "range",
@@ -100,27 +192,53 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": { "drawStyle": "bars", "fillOpacity": 70, "stacking": { "mode": "normal" }, "showPoints": "never" },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 70,
+            "stacking": {
+              "mode": "normal"
+            },
+            "showPoints": "never"
+          },
           "unit": "none",
           "mappings": []
         },
         "overrides": []
       },
       "options": {
-        "legend": { "displayMode": "list", "placement": "bottom" },
-        "tooltip": { "mode": "multi", "sort": "desc" }
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
       }
     },
     {
       "id": 3,
       "type": "stat",
       "title": "Levels in window",
-      "datasource": { "type": "loki", "uid": "loki" },
-      "gridPos": { "h": 5, "w": 8, "x": 0, "y": 8 },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 8,
+        "x": 0,
+        "y": 8
+      },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
           "expr": "sum by (level) (count_over_time({job=\"syslog\", shost=~\"$shost\", program=~\"$program\", level=~\"$level\"}[$__range]))",
           "refId": "A",
           "queryType": "instant",
@@ -129,24 +247,51 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
+          "color": {
+            "mode": "thresholds"
+          },
           "mappings": [],
-          "thresholds": { "mode": "absolute", "steps": [ { "color": "blue", "value": null } ] },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
           "unit": "none"
         },
         "overrides": []
       },
-      "options": { "colorMode": "value", "graphMode": "none", "justifyMode": "auto", "orientation": "horizontal", "textMode": "auto" }
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "textMode": "auto"
+      }
     },
     {
       "id": 4,
       "type": "table",
       "title": "Top program's",
-      "datasource": { "type": "loki", "uid": "loki" },
-      "gridPos": { "h": 5, "w": 16, "x": 8, "y": 8 },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 16,
+        "x": 8,
+        "y": 8
+      },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
           "expr": "topk(15, sum by (program) (count_over_time({job=\"syslog\", shost=~\"$shost\", level=~\"$level\"}[$__range])))",
           "refId": "A",
           "queryType": "instant",
@@ -154,21 +299,54 @@
         }
       ],
       "transformations": [
-        { "id": "seriesToTable", "options": {} },
-        { "id": "sortBy", "options": { "fields": {}, "sort": [ { "field": "Value", "desc": true } ] } }
+        {
+          "id": "seriesToTable",
+          "options": {}
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "Value",
+                "desc": true
+              }
+            ]
+          }
+        }
       ],
-      "fieldConfig": { "defaults": { "mappings": [], "unit": "none" }, "overrides": [] },
-      "options": { "showHeader": true }
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true
+      }
     },
     {
       "id": 5,
       "type": "logs",
       "title": "Syslog feed",
-      "datasource": { "type": "loki", "uid": "loki" },
-      "gridPos": { "h": 14, "w": 24, "x": 0, "y": 13 },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 14,
+        "w": 24,
+        "x": 0,
+        "y": 13
+      },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
           "expr": "{job=\"syslog\", shost=~\"$shost\", program=~\"$program\", level=~\"$level\"} |~ \"$zoek\" | json | line_format `{{ .ISODATE }} {{ .HOST }} {{ .PROGRAM }}{{ if .PID }}[{{ .PID }}]{{ end }}: {{ .MSG }}`",
           "refId": "A",
           "queryType": "range"
@@ -189,7 +367,12 @@
       "id": 6,
       "type": "row",
       "title": "Firewall (UniFi)",
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 27 },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 27
+      },
       "collapsed": false,
       "panels": []
     },
@@ -197,11 +380,22 @@
       "id": 7,
       "type": "timeseries",
       "title": "FW hits per rule",
-      "datasource": { "type": "loki", "uid": "loki" },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 28 },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 28
+      },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
           "expr": "sum by (fw_rule, fw_action) (count_over_time({job=\"syslog\", shost=~\"$shost\", fw_rule=~\".+\"}[$__interval]))",
           "refId": "A",
           "queryType": "range",
@@ -210,27 +404,56 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": { "drawStyle": "bars", "fillOpacity": 70, "stacking": { "mode": "normal" }, "showPoints": "never" },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 70,
+            "stacking": {
+              "mode": "normal"
+            },
+            "showPoints": "never"
+          },
           "unit": "none",
           "mappings": []
         },
         "overrides": []
       },
       "options": {
-        "legend": { "displayMode": "table", "placement": "right", "calcs": ["sum"] },
-        "tooltip": { "mode": "multi", "sort": "desc" }
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "calcs": [
+            "sum"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
       }
     },
     {
       "id": 8,
       "type": "stat",
       "title": "FW per actie",
-      "datasource": { "type": "loki", "uid": "loki" },
-      "gridPos": { "h": 8, "w": 6, "x": 12, "y": 28 },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 12,
+        "y": 28
+      },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
           "expr": "sum by (fw_action) (count_over_time({job=\"syslog\", shost=~\"$shost\", fw_rule=~\".+\"}[$__range]))",
           "refId": "A",
           "queryType": "instant",
@@ -239,26 +462,66 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
+          "color": {
+            "mode": "thresholds"
+          },
           "mappings": [
-            { "type": "value", "options": { "accept": { "color": "green" }, "drop": { "color": "orange" }, "reject": { "color": "red" } } }
+            {
+              "type": "value",
+              "options": {
+                "accept": {
+                  "color": "green"
+                },
+                "drop": {
+                  "color": "orange"
+                },
+                "reject": {
+                  "color": "red"
+                }
+              }
+            }
           ],
-          "thresholds": { "mode": "absolute", "steps": [ { "color": "blue", "value": null } ] },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
           "unit": "none"
         },
         "overrides": []
       },
-      "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "vertical", "textMode": "auto" }
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "textMode": "auto"
+      }
     },
     {
       "id": 9,
       "type": "stat",
       "title": "FW per protocol",
-      "datasource": { "type": "loki", "uid": "loki" },
-      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 28 },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 18,
+        "y": 28
+      },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
           "expr": "sum by (fw_proto) (count_over_time({job=\"syslog\", shost=~\"$shost\", fw_rule=~\".+\"}[$__range]))",
           "refId": "A",
           "queryType": "instant",
@@ -267,25 +530,52 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
+          "color": {
+            "mode": "thresholds"
+          },
           "mappings": [],
-          "thresholds": { "mode": "absolute", "steps": [ { "color": "blue", "value": null } ] },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
           "unit": "none"
         },
         "overrides": []
       },
-      "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "vertical", "textMode": "auto" }
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "vertical",
+        "textMode": "auto"
+      }
     },
     {
       "id": 10,
       "type": "logs",
       "title": "FW feed",
-      "datasource": { "type": "loki", "uid": "loki" },
-      "gridPos": { "h": 12, "w": 24, "x": 0, "y": 36 },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 36
+      },
       "targets": [
         {
-          "datasource": { "type": "loki", "uid": "loki" },
-          "expr": "{job=\"syslog\", shost=~\"$shost\", fw_rule=~\".+\"} |~ \"$zoek\" | json | line_format `{{ .ISODATE }} {{ .HOST }} [{{ .fw_rule }}/{{ .fw_action }}] {{ .fw_proto }} {{ .fw_src }}:{{ .fw_spt }} -> {{ .fw_dst }}:{{ .fw_dpt }} ({{ .fw_in }} -> {{ .fw_out }})`",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "{job=\"syslog\", shost=~\"$shost\", fw_rule=~\".+\"} |~ \"$zoek\" | json | label_format detected_level=`{{ if eq .fw_action \"accept\" }}info{{ else if eq .fw_action \"\" }}info{{ else }}error{{ end }}` | drop level | line_format `{{ .ISODATE }} {{ .HOST }} [{{ .fw_rule }}/{{ .fw_action }}] {{ .fw_proto }} {{ .fw_src }}:{{ .fw_spt }} -> {{ .fw_dst }}:{{ .fw_dpt }} ({{ .fw_in }} -> {{ .fw_out }})`",
           "refId": "A",
           "queryType": "range"
         }
@@ -298,7 +588,8 @@
         "prettifyLogMessage": false,
         "enableLogDetails": true,
         "dedupStrategy": "none",
-        "sortOrder": "Descending"
+        "sortOrder": "Descending",
+        "colouredText": true
       }
     }
   ]
