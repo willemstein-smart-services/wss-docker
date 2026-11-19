@@ -1,7 +1,7 @@
 {
   "uid": "wss-syslog",
   "title": "WSS Netwerk Syslog",
-  "version": 3,
+  "version": 4,
   "editable": true,
   "timezone": "Europe/Amsterdam",
   "refresh": "1m",
@@ -575,7 +575,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"syslog\", shost=~\"$shost\", fw_rule=~\".+\"} |~ \"$zoek\" | json | label_format detected_level=`{{ if eq .fw_action \"accept\" }}info{{ else if eq .fw_action \"\" }}info{{ else }}error{{ end }}` | drop level | line_format `{{ .ISODATE }} {{ .HOST }} [{{ .fw_rule }}/{{ .fw_action }}] {{ .fw_proto }} {{ .fw_src }}:{{ .fw_spt }} -> {{ .fw_dst }}:{{ .fw_dpt }} ({{ .fw_in }} -> {{ .fw_out }})`",
+          "expr": "{job=\"syslog\", shost=~\"$shost\", fw_rule=~\".+\"} |~ \"$zoek\" | json | label_format detected_level=`{{ if eq .fw_action \"accept\" }}info{{ else if eq .fw_action \"\" }}info{{ else }}error{{ end }}` | drop level | line_format `{{ .ISODATE }} {{ .HOST }} [{{ .fw_rule }}/{{ .fw_action }}] {{ .fw_proto }} {{ .fw_src_name | default .fw_src }}:{{ .fw_spt }} -> {{ .fw_dst_name | default .fw_dst }}:{{ .fw_dpt }} ({{ .fw_in }} -> {{ .fw_out }})`",
           "refId": "A",
           "queryType": "range"
         }

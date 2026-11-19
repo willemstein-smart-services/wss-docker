@@ -171,6 +171,18 @@ loki.process "syslog" {
 			fw_id    = "ID",
 		}
 	}
+	// BEGIN unifi-names (gegenereerd door bin/wss_unifi_namemap.sh — handmatige
+	// edits in dit blok worden overschreven; cron 1x/uur via UniFi API)
+	stage.template {
+		source   = "fw_src_name"
+		template = `{{ index (dict "192.168.10.64" "wss-webserver" "192.168.10.65" "wss-grafana" "192.168.22.147" "homeassistant" ) .fw_src | default "" }}`
+	}
+	stage.template {
+		source   = "fw_dst_name"
+		template = `{{ index (dict "192.168.10.64" "wss-webserver" "192.168.10.65" "wss-grafana" "192.168.22.147" "homeassistant" ) .fw_dst | default "" }}`
+	}
+	// END unifi-names
+
 	// UniFi verdict-letter op het einde van de rulenaam: A/R/D.
 	stage.template {
 		source   = "fw_action"
@@ -185,14 +197,16 @@ loki.process "syslog" {
 	}
 	stage.structured_metadata {
 		values = {
-			fw_src = "fw_src",
-			fw_dst = "fw_dst",
-			fw_spt = "fw_spt",
-			fw_dpt = "fw_dpt",
-			fw_in  = "fw_in",
-			fw_out = "fw_out",
-			fw_mac = "fw_mac",
-			fw_ttl = "fw_ttl",
+			fw_src      = "fw_src",
+			fw_dst      = "fw_dst",
+			fw_spt      = "fw_spt",
+			fw_dpt      = "fw_dpt",
+			fw_in       = "fw_in",
+			fw_out      = "fw_out",
+			fw_mac      = "fw_mac",
+			fw_ttl      = "fw_ttl",
+			fw_src_name = "fw_src_name",
+			fw_dst_name = "fw_dst_name",
 		}
 	}
 }
