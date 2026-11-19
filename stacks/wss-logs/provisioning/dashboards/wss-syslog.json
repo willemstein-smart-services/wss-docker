@@ -1,7 +1,7 @@
 {
   "uid": "wss-syslog",
   "title": "WSS Netwerk Syslog",
-  "version": 1,
+  "version": 2,
   "editable": true,
   "timezone": "Europe/Amsterdam",
   "refresh": "1m",
@@ -170,6 +170,122 @@
         {
           "datasource": { "type": "loki", "uid": "loki" },
           "expr": "{job=\"syslog\", shost=~\"$shost\", program=~\"$program\", level=~\"$level\"} |~ \"$zoek\" | json | line_format `{{ .ISODATE }} {{ .HOST }} {{ .PROGRAM }}{{ if .PID }}[{{ .PID }}]{{ end }}: {{ .MSG }}`",
+          "refId": "A",
+          "queryType": "range"
+        }
+      ],
+      "options": {
+        "showTime": true,
+        "showLabels": false,
+        "showCommonLabels": false,
+        "wrapLogMessage": true,
+        "prettifyLogMessage": false,
+        "enableLogDetails": true,
+        "dedupStrategy": "none",
+        "sortOrder": "Descending"
+      }
+    },
+    {
+      "id": 6,
+      "type": "row",
+      "title": "Firewall (UniFi)",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 27 },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "FW hits per rule",
+      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 28 },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "sum by (fw_rule, fw_action) (count_over_time({job=\"syslog\", shost=~\"$shost\", fw_rule=~\".+\"}[$__interval]))",
+          "refId": "A",
+          "queryType": "range",
+          "legendFormat": "{{fw_rule}} ({{fw_action}})"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "drawStyle": "bars", "fillOpacity": 70, "stacking": { "mode": "normal" }, "showPoints": "never" },
+          "unit": "none",
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": { "displayMode": "table", "placement": "right", "calcs": ["sum"] },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      }
+    },
+    {
+      "id": 8,
+      "type": "stat",
+      "title": "FW per actie",
+      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": { "h": 8, "w": 6, "x": 12, "y": 28 },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "sum by (fw_action) (count_over_time({job=\"syslog\", shost=~\"$shost\", fw_rule=~\".+\"}[$__range]))",
+          "refId": "A",
+          "queryType": "instant",
+          "legendFormat": "{{fw_action}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [
+            { "type": "value", "options": { "accept": { "color": "green" }, "drop": { "color": "orange" }, "reject": { "color": "red" } } }
+          ],
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "blue", "value": null } ] },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "vertical", "textMode": "auto" }
+    },
+    {
+      "id": 9,
+      "type": "stat",
+      "title": "FW per protocol",
+      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 28 },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "sum by (fw_proto) (count_over_time({job=\"syslog\", shost=~\"$shost\", fw_rule=~\".+\"}[$__range]))",
+          "refId": "A",
+          "queryType": "instant",
+          "legendFormat": "{{fw_proto}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "blue", "value": null } ] },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "vertical", "textMode": "auto" }
+    },
+    {
+      "id": 10,
+      "type": "logs",
+      "title": "FW feed",
+      "datasource": { "type": "loki", "uid": "loki" },
+      "gridPos": { "h": 12, "w": 24, "x": 0, "y": 36 },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "loki" },
+          "expr": "{job=\"syslog\", shost=~\"$shost\", fw_rule=~\".+\"} |~ \"$zoek\" | json | line_format `{{ .ISODATE }} {{ .HOST }} [{{ .fw_rule }}/{{ .fw_action }}] {{ .fw_proto }} {{ .fw_src }}:{{ .fw_spt }} -> {{ .fw_dst }}:{{ .fw_dpt }} ({{ .fw_in }} -> {{ .fw_out }})`",
           "refId": "A",
           "queryType": "range"
         }

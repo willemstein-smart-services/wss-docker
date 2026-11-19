@@ -109,6 +109,7 @@ loki.process "syslog" {
 			level_raw = "LEVEL",
 			shost     = "HOST",
 			program   = "PROGRAM",
+			msg       = "MSG",
 		}
 	}
 
@@ -144,6 +145,54 @@ loki.process "syslog" {
 		stage.drop {
 			expression          = ".*"
 			drop_counter_reason = "z2m_lowprio"
+		}
+	}
+
+	// UniFi firewall-regels: [RULESET-NR-V]KEY=V ... (iptables-formaat,
+	// bv. [WAN_OUT-2001-R]IN=.. OUT=.. SRC=.. DST=.. PROTO=UDP SPT=.. DPT=..).
+	// fw_rule/proto/action = labels (lage cardinaliteit); adressen/poorten
+	// gaan als structured metadata mee -> querybaar maar niet geïndexeerd.
+	stage.regex {
+		source     = "msg"
+		expression = `^\[(?P<fw_rule>[^\]]+)\](?P<fw_kv>.*)`
+	}
+	stage.logfmt {
+		source  = "fw_kv"
+		mapping = {
+			fw_in    = "IN",
+			fw_out   = "OUT",
+			fw_src   = "SRC",
+			fw_dst   = "DST",
+			fw_proto = "PROTO",
+			fw_spt   = "SPT",
+			fw_dpt   = "DPT",
+			fw_mac   = "MAC",
+			fw_ttl   = "TTL",
+			fw_id    = "ID",
+		}
+	}
+	// UniFi verdict-letter op het einde van de rulenaam: A/R/D.
+	stage.template {
+		source   = "fw_action"
+		template = `{{ $r := .fw_rule | default "" }}{{ if regexMatch "-A$" $r }}accept{{ else if regexMatch "-R$" $r }}reject{{ else if regexMatch "-D$" $r }}drop{{ end }}`
+	}
+	stage.labels {
+		values = {
+			fw_rule   = "fw_rule",
+			fw_proto  = "fw_proto",
+			fw_action = "fw_action",
+		}
+	}
+	stage.structured_metadata {
+		values = {
+			fw_src = "fw_src",
+			fw_dst = "fw_dst",
+			fw_spt = "fw_spt",
+			fw_dpt = "fw_dpt",
+			fw_in  = "fw_in",
+			fw_out = "fw_out",
+			fw_mac = "fw_mac",
+			fw_ttl = "fw_ttl",
 		}
 	}
 }
