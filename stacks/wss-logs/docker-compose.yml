@@ -157,6 +157,29 @@ services:
       docker_network:
         ipv4_address: 192.168.10.67
 
+  docker-events:
+    image: docker:cli
+    pull_policy: always
+    container_name: wss-docker-events
+    hostname: wss-docker-events
+    restart: unless-stopped
+    # json-file logrotatie (AVG/opslag): max 3x10MB per container
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    environment:
+      TZ: Europe/Amsterdam
+    # Daemon-events (create/start/die/pull/netwerk) -> Loki job=docker-events.
+    # Socket read-only; pusht naar loki vast IP (script in config/).
+    entrypoint: ["sh","/etc/wss/docker-events.sh"]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /volume1/docker/devin/home/workspace/wss-docker/stacks/wss-logs/config/docker-events.sh:/etc/wss/docker-events.sh:ro
+    networks:
+      docker_network:
+
 networks:
   docker_network:
     external: true
