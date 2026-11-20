@@ -42,6 +42,8 @@ services:
       TZ: Europe/Amsterdam
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: "VERVANG_DOOR_STERK_WACHTWOORD"
+      # Alerting contact point telegram-erik (provisioning/alerting/wss-heartbeat.yaml)
+      TELEGRAM_BOT_TOKEN: "VERVANG_DOOR_TELEGRAM_BOT_TOKEN"
       GF_USERS_ALLOW_SIGN_UP: "false"
       GF_ANALYTICS_REPORTING_ENABLED: "false"
     volumes:
