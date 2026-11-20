@@ -6,7 +6,7 @@ LOKI="${LOKI_URL:-http://192.168.10.66:3100}/loki/api/v1/push"
 
 while :; do
   docker events --format '{{json .}}' 2>/dev/null | while IFS= read -r line; do
-    ts=$(date +%s%N)
+    ts="$(date +%s)000000000"  # busybox-date kent %N niet -> sec*1e9
     esc=$(printf '%s' "$line" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g')
     printf '{"streams":[{"stream":{"job":"docker-events","level":"info"},"values":[["%s","%s"]]}]}' "$ts" "$esc" \
       | wget -q -T 10 -O /dev/null --post-data=@- --header='Content-Type: application/json' "$LOKI"
