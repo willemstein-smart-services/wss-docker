@@ -39,3 +39,19 @@ Packages zijn private; zet eventueel op public via package → settings.
 - Elke build tagt `latest` + Dockerfile-versie + `sha-xxxx` (mutable tags)
 - Stack gebruikt `:latest` + `pull_policy: always` -> redeploy = nieuwste build
 - Wil je pinnen/rollback: zet `image: ...:<versie>` + `pull_policy: missing`
+
+## Stacks deployen (Portainer = git-source)
+
+ALLE stacks in Portainer zijn **git-repository stacks**: ze wijzen naar
+deze repo + het compose-pad. Deployen = **Pull and redeploy** in Portainer
+— die haalt de laatste commit. Nooit compose-inhoud handmatig plakken.
+
+Secrets horen NIET in compose en niet in Portainer-velden:
+- `.devin/*.env` files op het NAS-volume (bijv. `grafana.env` met
+  `TELEGRAM_BOT_TOKEN`, perms 604) → :ro-volume in de service mounten →
+  in de entrypoint sourcen: `entrypoint: ["sh","-c","set -a; . /pad; set +a; exec /run.sh"]`
+- **`env_file:` werkt NIET** onder Portainer (resolve client-side in de
+  portainer-container waar /volume1 niet bestaat). Volumes resolven
+  wél daemon-side op de NAS.
+- Let op container-uid: grafana draait als uid 472 — een `600`-envfile
+  is dan onleesbaar (vandaar 604: owner-only write, world read).

@@ -19,8 +19,10 @@ chmod 777 /volume1/docker/wss-grafana/grafana \
           /volume1/docker/wss-grafana/alloy
 ```
 
-In Portainer: nieuwe stack `wss-logs`, inhoud van `docker-compose.yml`
-plakken, `GF_SECURITY_ADMIN_PASSWORD` invullen, deployen.
+In Portainer: nieuwe stack `wss-logs` als **git-repository stack**
+(repo: wss-docker, pad `stacks/wss-logs/docker-compose.yml`),
+`GF_SECURITY_ADMIN_PASSWORD` invullen, deployen. Updates: **Pull and
+redeploy** — compose komt altijd uit git, nooit plakken.
 
 ## Hoe het werkt
 
@@ -45,6 +47,12 @@ plakken, `GF_SECURITY_ADMIN_PASSWORD` invullen, deployen.
   de Loki-retentie.
 - **Grafana** (.65) laadt datasource + dashboard automatisch via
   `provisioning/` — staat in deze repo, wijzigingen via git.
+- **Alerting** via `provisioning/alerting/wss-heartbeat.yaml`: contact
+  point `telegram-erik` + dead-man regel `Devin cron-heartbeat stil`
+  (geen `CRONBEAT` in Loki >10m → Telegram). De bot-token komt uit
+  `/volume1/docker/devin/home/workspace/.devin/grafana.env` → :ro-gemount
+  als `/etc/grafana-secrets.env` → gesourced in de entrypoint.
+  `env_file:` gebruiken lukt NIET onder Portainer (client-side resolve).
 
 ## Config wijzigen
 
