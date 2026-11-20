@@ -9,8 +9,9 @@ services:
     restart: unless-stopped
     # Resource-limits: een losgeslagen AI-run mag de NAS niet meenemen
     # (v2-velden; deploy.resources is swarm-only en werkt niet in Portainer)
+    # NB: geen cpus:-veld — de Synology-kernel mist de CPU CFS scheduler
+    # (daemon: "NanoCPUs can not be set"). cpuset-pinning is de evt. fallback.
     mem_limit: 3g
-    cpus: 2.0
     # json-file logrotatie (AVG/opslag): max 3x10MB per container
     logging:
       driver: json-file
