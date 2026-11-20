@@ -42,10 +42,13 @@ services:
       TZ: Europe/Amsterdam
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: "VERVANG_DOOR_STERK_WACHTWOORD"
-      # Alerting contact point telegram-erik (provisioning/alerting/wss-heartbeat.yaml)
-      TELEGRAM_BOT_TOKEN: "VERVANG_DOOR_TELEGRAM_BOT_TOKEN"
       GF_USERS_ALLOW_SIGN_UP: "false"
       GF_ANALYTICS_REPORTING_ENABLED: "false"
+    # Service-secrets via env_file op NAS-volume (zelfde model als
+    # .devin/secrets.env; bevat TELEGRAM_BOT_TOKEN voor contact point
+    # telegram-erik uit provisioning/alerting/wss-heartbeat.yaml)
+    env_file:
+      - /volume1/docker/devin/home/workspace/.devin/grafana.env
     volumes:
       - /volume1/docker/wss-grafana/grafana:/var/lib/grafana
       - /volume1/docker/devin/home/workspace/wss-docker/stacks/wss-logs/provisioning:/etc/grafana/provisioning:ro
