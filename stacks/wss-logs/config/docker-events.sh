@@ -8,8 +8,8 @@ while :; do
   docker events --format '{{json .}}' 2>/dev/null | while IFS= read -r line; do
     ts="$(date +%s)000000000"  # busybox-date kent %N niet -> sec*1e9
     esc=$(printf '%s' "$line" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g')
-    printf '{"streams":[{"stream":{"job":"docker-events","level":"info"},"values":[["%s","%s"]]}]}' "$ts" "$esc" \
-      | wget -q -T 10 -O /dev/null --post-data=@- --header='Content-Type: application/json' "$LOKI"
+    printf '{"streams":[{"stream":{"job":"docker-events","level":"info"},"values":[["%s","%s"]]}]}' "$ts" "$esc" > /tmp/ev.json
+    wget -q -T 10 -O /dev/null --post-file /tmp/ev.json --header='Content-Type: application/json' "$LOKI"
   done
   echo "$(date -Iseconds) docker-events: stream onderbroken, retry in 5s" >&2
   sleep 5
