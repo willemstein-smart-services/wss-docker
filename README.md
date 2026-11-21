@@ -57,3 +57,33 @@ Secrets horen NIET in compose en niet in Portainer-velden:
   wél daemon-side op de NAS.
 - Let op container-uid: grafana draait als uid 472 — een `600`-envfile
   is dan onleesbaar (vandaar 604: owner-only write, world read).
+
+## Twee Devin-zones: devin (intern) vs wss-devin-klant
+
+Twee Devin-containers, twee trust-zones, zelfde `wss-devin`-image:
+
+| | `devin` (AdminDevin) | `wss-devin-klant` (DevinKlant) |
+|---|---|---|
+| Stack | `stacks/wss/` | `stacks/wss-devin-klant/` |
+| IP | 192.168.10.61 | 192.168.10.70 |
+| Home-volume | `/volume1/docker/devin/home` | `/volume1/docker/devin-klant/home` |
+| Toegang | interne creds, mounts, monitoring | ALLEEN klant-creds — geen interne mounts |
+
+**CLI-seed**: de Devin CLI leeft op het home-volume, niet in het image.
+Bij een verse container alleen `.local/bin` + `.local/share/devin/cli/_versions`
+kopiëren — nooit de rest van `cli/` (dat lekt sessie-history) en nooit
+`credentials.toml`/`~/.config` (dat lekt credentials).
+
+**Handover** (concept geaccepteerd -> DevinKlant):
+- AdminDevin schrijft bundles naar `/handover/<slug>/` =
+  `/volume1/docker/devin-klant/home/workspace/handover/<slug>/` —
+  dezelfde map als `~/workspace/handover/` bij DevinKlant (geen stack-wijziging
+  aan klant-zijde; één extra bind in `stacks/wss/`).
+- Bundle: `handover.json` + `secrets.env` + `READY` (+ opt. `concept.tar.gz`).
+  Script: `bin/wss_klant_handover.sh` (workspace-repo), cron `:47/u --auto`.
+- DevinKlant verwerkt per zijn `klant-deploy.md` rule -> `klanten/<slug>/`.
+
+**Klant deploy-lock**: SFTP-deploys + DB-mutaties naar klanten vereisen
+`UNLOCKED` op `klant:<customer_details.id>` of `ALL` (willemste.in
+`klant-deploy-lock.php` + `admin_klant_deploy_2fa.php`). DevinKlant mag
+alleen deployen via `klant_deploy.sh` — de check zit IN het script.
