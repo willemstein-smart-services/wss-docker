@@ -30,6 +30,9 @@ Cannot send notification to   # uptime-kuma meldt mislukte aflevering via Pushov
 EAI_AGAIN api.pushover.net   # uptime-kuma DNS-fail op de Pushover-pushpath; gescoped op pushover zodat echte DNS-ruis naar andere hosts zichtbaar blijft
 database is locked   # Grafana SQLITE_BUSY-contention familie (~100x/24u): sqlstore.max-retries-reached retries in authn/ngalert/provisioning/bleve/ssosettings/cleanup — transient, herstelt elke cyclus (precedent: 'cleaning up inactive secure values')
 Failed to write gzipped response   # middleware.gzip client-abort/UI-artifact (~12-20x/24u, recurring): browser/proxy verbreekt tijdens gzip-write, geen app-impact
+couldn't parse push request   # Loki distributor weigert misvormde pushes (161x/2u 20-11: docker-events busybox-wget bug, gefixt in d9e1ed5) — zelfde familie als 'has timestamp too old'
+could not fetch logs for container   # Alloy tailer op gerecete/verdwenen container (18x rond docker-events redeploys 20-11) — zelfde familie als 'failed to tail file'
+wget: server returned error   # docker-events sidecar push-pad (busybox wget -> Loki 400, 161x/2u 20-11) — monitoring-artifact, gescoped op wget-prefix
 
 # --- Syslog-side filters (wss-syslog.json, aparte familie van de docker-kaarten) ---
 # 'Syslog Feed (Filtered)' filtert óók:
