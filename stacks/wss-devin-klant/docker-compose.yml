@@ -25,6 +25,14 @@
 # wss-devin-klant -> alert/feed onderscheidt per container.
 # Loki-push: container zit op docker_network -> wss-loki:3100 resolved
 # via embedded DNS (loki_event.sh default; LOKI_URL is override-baar).
+#
+# CLI-SEED op verse home-volume (devin binary staat NIET in het image):
+#   kopieer UITSLUITEND .local/bin + .local/share/devin/cli/_versions van
+#   de interne devin. NOOIT de rest van cli/ meenemen — sessions.db,
+#   transcripts/, summaries/, trusted_workspaces.json, installation_id,
+#   daemon/, plugins*/ zijn LOKALE staat (geschiedenis + interne sessies
+#   lekken dan naar de klant-CLI!). credentials.toml + .config/devin
+#   blijven sowieso intern.
 services:
   devin-klant:
     image: ghcr.io/willemstein-smart-services/wss-devin:latest
