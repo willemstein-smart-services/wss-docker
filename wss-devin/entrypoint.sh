@@ -61,6 +61,16 @@ done
 # of zetten VAR=value-regels bovenin hun cron.d-bestand.
 printenv | grep -vE '^(PWD|OLDPWD|SHLVL|_)=' > /etc/container.env
 chmod 0644 /etc/container.env
+
+# --- 2b) devin-PATH voor alle shells ---------------------------------------
+# /etc/profile reset PATH (mist ~/.local/bin) en een VERSE home-volume heeft
+# geen .profile met de export -> 'devin: command not found' in ttyd/cron.
+# Container-fs files: bij elke start wegschrijven = redeploy-proof, werkt in
+# elke container van dit image (ook de klant-container met leeg volume).
+printf 'export PATH="$HOME/.local/bin:$PATH"\n' > /etc/profile.d/devin-path.sh
+chmod 644 /etc/profile.d/devin-path.sh
+grep -q 'local/bin' /etc/bash.bashrc || \
+  echo 'export PATH="$HOME/.local/bin:$PATH"' >> /etc/bash.bashrc
 mkdir -p /var/log/wss
 
 if cron; then

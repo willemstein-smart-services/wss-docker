@@ -21,6 +21,7 @@
 # (loki_event.sh wordt via de eigen script-dir gevonden; geen
 # workspace-afhankelijkheid -> werkt ook in de klant-container).
 set -uo pipefail
+DEVIN=/home/devin/.local/bin/devin
 
 SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 EVT() { "$SELF_DIR/loki_event.sh" "$1" devin-selfcheck "$2" "$3" >/dev/null 2>&1 || true; }
@@ -33,14 +34,14 @@ exec 9> /tmp/wss_devin_selfcheck.lock
 flock -n 9 || exit 0
 
 # --- 1) auth ---------------------------------------------------------------
-AUTH_OUT="$(timeout 30 devin auth status 2>&1)"
+AUTH_OUT="$(timeout 30 "$DEVIN" auth status 2>&1)"
 if ! grep -qi 'logged in' <<<"$AUTH_OUT"; then
     EVT crit DEVIN_SELFCHECK_FAIL "$HOST auth: $(tail -1 <<<"$AUTH_OUT" | tr '\n' ' ' | cut -c1-140)"
     exit 1
 fi
 
 # --- 2) API-reachability + api-key (gratis, geen sessie) ---------------------
-API_OUT="$(timeout 30 devin cloud drs whoami 2>&1)"
+API_OUT="$(timeout 30 "$DEVIN" cloud drs whoami 2>&1)"
 if [ $? -ne 0 ] || ! grep -q '"api_key_set": *true' <<<"$API_OUT"; then
     EVT crit DEVIN_SELFCHECK_FAIL "$HOST api: $(tail -1 <<<"$API_OUT" | tr '\n' ' ' | cut -c1-140)"
     exit 1
@@ -49,7 +50,7 @@ fi
 # --- 3) live probe: echte mini-sessie (vangt quota/limit/model-blok) ---------
 mkdir -p "$PROBE_DIR"
 cd "$PROBE_DIR" || exit 1
-PROBE_OUT="$(timeout "$PROBE_TIMEOUT" devin -p --respect-workspace-trust false \
+PROBE_OUT="$(timeout "$PROBE_TIMEOUT" "$DEVIN" -p --respect-workspace-trust false \
     -- 'Reply with exactly this token and nothing else: SELFCHECK_OK' 2>&1)"
 rc=$?
 
