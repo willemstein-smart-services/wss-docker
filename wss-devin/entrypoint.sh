@@ -37,13 +37,19 @@ for job in wss-cronbeat wss-portainer-audit wss-devin-selfcheck; do
   [ -f "/etc/cron.d/$job" ] && continue
   case "$job" in
     wss-cronbeat)
-      line='* * * * * devin /home/devin/workspace/bin/wss_cronbeat.sh >> /var/log/wss/cronbeat.log 2>&1' ;;
+      line='* * * * * devin /home/devin/workspace/bin/wss_cronbeat.sh >> /var/log/wss/cronbeat.log 2>&1'
+      need=/home/devin/workspace/bin/wss_cronbeat.sh ;;
     wss-portainer-audit)
-      line='*/5 * * * * devin /home/devin/workspace/bin/wss_portainer_audit.sh >> /var/log/wss/portainer-audit.log 2>&1' ;;
+      line='*/5 * * * * devin /home/devin/workspace/bin/wss_portainer_audit.sh >> /var/log/wss/portainer-audit.log 2>&1'
+      need=/home/devin/workspace/bin/wss_portainer_audit.sh ;;
     wss-devin-selfcheck)
       # image-pad (geen workspace-afhankelijkheid -> werkt ook in klant-container)
-      line='41 * * * * devin /usr/local/lib/wss/bin/wss_devin_selfcheck.sh >> /var/log/wss/devin-selfcheck.log 2>&1' ;;
+      line='41 * * * * devin /usr/local/lib/wss/bin/wss_devin_selfcheck.sh >> /var/log/wss/devin-selfcheck.log 2>&1'
+      need=/usr/local/lib/wss/bin/wss_devin_selfcheck.sh ;;
   esac
+  # workspace-scripts ontbreken in bv. de klant-container -> job overslaan
+  # i.p.v. elke cron-run 'not found' te loggen
+  [ -f "$need" ] || { echo "cron.d: $job overgeslagen ($need ontbreekt)"; continue; }
   printf 'MAILTO=""\n%s\n' "$line" > "/etc/cron.d/$job"
   chown root:root "/etc/cron.d/$job" 2>/dev/null || true
   chmod 0644 "/etc/cron.d/$job"
