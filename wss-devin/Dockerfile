@@ -3,7 +3,7 @@ FROM debian:trixie-slim
 LABEL org.opencontainers.image.title="WSS Devin Linux"
 LABEL org.opencontainers.image.description="Debian Slim: dev-tools, ttyd webterminal, cron"
 LABEL org.opencontainers.image.source="https://github.com/willemstein-smart-services/wss-docker"
-LABEL org.opencontainers.image.version="1.2.3"
+LABEL org.opencontainers.image.version="1.2.4"
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Europe/Amsterdam
@@ -117,6 +117,13 @@ WORKDIR /home/devin/workspace
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod 755 /entrypoint.sh
+
+# WSS-scripts in image (canonical: deze repo, wss-devin/bin/) — werkt in elke
+# container van dit image, ook zonder workspace-volume (klant-container):
+#   loki_event.sh            push 1 regel -> {job=wss-cron}
+#   wss_devin_selfcheck.sh   auth+api+live-probe -> DEVIN_SELFCHECK_* events
+COPY bin/ /usr/local/lib/wss/bin/
+RUN chmod 755 /usr/local/lib/wss/bin/*.sh
 
 EXPOSE 7681
 

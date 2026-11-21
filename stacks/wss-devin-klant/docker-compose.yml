@@ -1,0 +1,65 @@
+# WSS-DEVIN-KLANT stack — losse Devin CLI container voor klant-werk
+# (onderhoud/deploys/monitoring van klant-sites, intake via klant-portal).
+#
+# LOSSE STACK bewust (geen onderdeel van stacks/wss):
+#   eigen lifecycle — redeploy van de WSS-stack raakt klant-werk niet
+#   en andersom. Portainer: eigen git-repository stack -> dit compose-pad.
+#
+# TRUST-ZONE (architectuur-beslissing 21-11):
+#   - 'devin' (.61)       = WSS-INTERN: deploy-keys wss-docker, Loki/Grafana,
+#                           admin-2FA, interne scripts. Kroonjuwelen.
+#   - 'wss-devin-klant'   = KLANT-scope: ALLEEN klant-credentials. Fysiek
+#     (.70)                   onmogelijk bij interne creds te komen -> geen
+#                           interne volumes, geen interne env, geen interne
+#                           secrets-mounts.
+#   Per-klant isolatie = credential-niveau (niet container-niveau):
+#     eigen git-repo + deploy key (repo-scoped), eigen SFTP-account
+#     (chroot webroot), eigen workspace-map + secrets-submap.
+#   High-trust klant (compliance/groot) -> eigen container afleiden van
+#   deze compose (zelfde image, eigen volumes) — 'tiered' model.
+#
+# Image: hetzelfde ghcr wss-devin image als de interne container —
+# vanaf 1.2.4 zitten loki_event.sh + wss_devin_selfcheck.sh IN het image
+# (/usr/local/lib/wss/bin) en installeert de entrypoint de uurlijkse
+# selfcheck automatisch in /etc/cron.d. Events dragen $(hostname)=
+# wss-devin-klant -> alert/feed onderscheidt per container.
+# Loki-push: container zit op docker_network -> wss-loki:3100 resolved
+# via embedded DNS (loki_event.sh default; LOKI_URL is override-baar).
+services:
+  devin-klant:
+    image: ghcr.io/willemstein-smart-services/wss-devin:latest
+    pull_policy: always   # :latest is mutable -> altijd nieuwste pullen bij deploy
+    container_name: wss-devin-klant
+    hostname: wss-devin-klant
+    restart: unless-stopped
+    mem_limit: 3g   # zelfde limit als devin: losgeslagen AI-run mag NAS niet meenemen
+    # json-file logrotatie (AVG/opslag): max 3x10MB per container
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    environment:
+      TZ: Europe/Amsterdam
+      DEVIN_WEB_PASSWORD: "VERVANG_DOOR_STERK_WACHTWOORD"
+    volumes:
+      # Eigen home-volume: eigen credentials.toml, workspace, ssh-keys —
+      # bewust GEEN mount naar /volume1/docker/devin/home (interne zone!).
+      - /volume1/docker/devin-klant/home:/home/devin
+      # Eigen cron.d + logs (zelfde volume-patroon als devin)
+      - /volume1/docker/devin-klant/home/cron.d:/etc/cron.d
+      - /volume1/docker/devin-klant/home/logs:/var/log/wss
+      # PER-KLANT mounts (voorbeeld — activeer per geonboardde klant):
+      # - /volume1/docker/klanten/<klant>:/home/devin/workspace/klanten/<klant>
+      # Geen homarr-, kuma-, flows-, web_www- of backup-mounts: dat is de
+      # isolatie. Klant-SFTP/-DB loopt uitgaand via docker_network.
+    working_dir: /home/devin/workspace
+    stdin_open: true
+    tty: true
+    networks:
+      docker_network:
+        ipv4_address: 192.168.10.70
+
+networks:
+  docker_network:
+    external: true

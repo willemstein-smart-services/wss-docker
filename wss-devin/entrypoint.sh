@@ -41,7 +41,8 @@ for job in wss-cronbeat wss-portainer-audit wss-devin-selfcheck; do
     wss-portainer-audit)
       line='*/5 * * * * devin /home/devin/workspace/bin/wss_portainer_audit.sh >> /var/log/wss/portainer-audit.log 2>&1' ;;
     wss-devin-selfcheck)
-      line='41 * * * * devin /home/devin/workspace/bin/wss_devin_selfcheck.sh >> /var/log/wss/devin-selfcheck.log 2>&1' ;;
+      # image-pad (geen workspace-afhankelijkheid -> werkt ook in klant-container)
+      line='41 * * * * devin /usr/local/lib/wss/bin/wss_devin_selfcheck.sh >> /var/log/wss/devin-selfcheck.log 2>&1' ;;
   esac
   printf 'MAILTO=""\n%s\n' "$line" > "/etc/cron.d/$job"
   chown root:root "/etc/cron.d/$job" 2>/dev/null || true

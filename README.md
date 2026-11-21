@@ -12,6 +12,8 @@ org-GHCR: `ghcr.io/willemstein-smart-services/<image>:<tag>` via
 | `wss-webserver/` | Apache + mod_php + MariaDB (PAC) |
 | `.github/workflows/build-<image>.yml` | per-image build & push |
 | `stacks/wss/docker-compose.yml` | Portainer-stack (devin+flows+monitoring) |
+| `stacks/wss-devin-klant/docker-compose.yml` | losse stack: Devin CLI voor klant-werk (trust-zone gescheiden van interne `devin`) |
+| `wss-devin/bin/` | scripts IN het image (`/usr/local/lib/wss/bin/`): loki_event, devin-selfcheck |
 
 ## Release-flow (per image)
 1. Wijzig files in `<image>/`, bump `org.opencontainers.image.version` in de Dockerfile
