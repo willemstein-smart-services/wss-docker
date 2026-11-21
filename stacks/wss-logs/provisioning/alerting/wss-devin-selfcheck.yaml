@@ -1,0 +1,95 @@
+# WSS — alert op devin selfcheck-failures.
+#
+# wss_devin_selfcheck.sh draait 1x/uur (cron) en pusht bij problemen
+# {job="wss-cron", src="devin-selfcheck", event=DEVIN_SELFCHECK_FAIL|
+# DEVIN_QUOTA_FAIL}. Dekt auth, api.devin.ai én een echte mini-sessie —
+# vangt het fail-stopped scenario (usage cap bereikt -> automation stopt
+# stilletjes). Hostname staat in de msg -> werkt ook voor een tweede
+# (klant) container met hetzelfde script.
+#
+# Contact point telegram-erik + policies: zie wss-heartbeat.yaml.
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: wss-devin-selfcheck
+    folder: WSS
+    interval: 1m
+    rules:
+      - uid: wss-devin-selfcheck-fail
+        title: Devin selfcheck faalt
+        condition: C
+        noDataState: OK
+        execErrState: Alerting
+        for: 0m
+        isPaused: false
+        labels:
+          team: wss-ops
+        annotations:
+          summary: "Devin selfcheck faalde in laatste 75m (auth/api/quota/probe). Hostname in Loki-msg; check /var/log/wss/devin-selfcheck.log in de container."
+        data:
+          - refId: A
+            datasourceUid: loki
+            queryType: instant
+            relativeTimeRange:
+              from: 4500
+              to: 0
+            model:
+              refId: A
+              datasource:
+                type: loki
+                uid: loki
+              expr: 'count(count_over_time({job="wss-cron", event=~"DEVIN_SELFCHECK_FAIL|DEVIN_QUOTA_FAIL"}[75m])) or vector(0)'
+              instant: true
+              range: false
+              editorMode: code
+              queryType: instant
+          - refId: B
+            datasourceUid: __expr__
+            queryType: ''
+            relativeTimeRange:
+              from: 4500
+              to: 0
+            model:
+              refId: B
+              datasource:
+                type: __expr__
+                uid: __expr__
+              type: reduce
+              expression: A
+              reducer: last
+              conditions:
+                - evaluator:
+                    params: [0, 0]
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params: [B]
+                  reducer:
+                    type: last
+                  type: query
+          - refId: C
+            datasourceUid: __expr__
+            queryType: ''
+            relativeTimeRange:
+              from: 4500
+              to: 0
+            model:
+              refId: C
+              datasource:
+                type: __expr__
+                uid: __expr__
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator:
+                    params: [0]
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params: [C]
+                  reducer:
+                    type: last
+                  type: query

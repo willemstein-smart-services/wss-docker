@@ -33,13 +33,15 @@ fi
 # Deze jobs staan NIET in de user-crontab (die leeft in container-fs en
 # overleeft geen recreate). Entrypoint installeert ze idempotent in het
 # cron.d-volume — na elke (re)deploy staan ze er vanzelf weer.
-for job in wss-cronbeat wss-portainer-audit; do
+for job in wss-cronbeat wss-portainer-audit wss-devin-selfcheck; do
   [ -f "/etc/cron.d/$job" ] && continue
   case "$job" in
     wss-cronbeat)
       line='* * * * * devin /home/devin/workspace/bin/wss_cronbeat.sh >> /var/log/wss/cronbeat.log 2>&1' ;;
     wss-portainer-audit)
       line='*/5 * * * * devin /home/devin/workspace/bin/wss_portainer_audit.sh >> /var/log/wss/portainer-audit.log 2>&1' ;;
+    wss-devin-selfcheck)
+      line='41 * * * * devin /home/devin/workspace/bin/wss_devin_selfcheck.sh >> /var/log/wss/devin-selfcheck.log 2>&1' ;;
   esac
   printf 'MAILTO=""\n%s\n' "$line" > "/etc/cron.d/$job"
   chown root:root "/etc/cron.d/$job" 2>/dev/null || true
