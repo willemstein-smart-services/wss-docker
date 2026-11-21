@@ -119,8 +119,9 @@ if [ $# -eq 0 ] || { [ $# -eq 1 ] && [ "$1" = "ttyd" ]; }; then
   [ -n "${TTYD_THEME:-}" ] && set -- "$@" -t "theme=${TTYD_THEME}"
   [ -n "${TTYD_TITLE:-}" ] && set -- "$@" -t "titleFixed=${TTYD_TITLE}"
   # TTYD_INDEX: custom index.html (bv. agent-header bar boven de terminal).
-  # Pad verwijst naar een compose-gemount bestand; ontbreken = default index.
-  [ -n "${TTYD_INDEX:-}" ] && set -- "$@" --index "$TTYD_INDEX"
+  # Alleen gebruiken als het bestand er ook is: zo kan een env die al gezet
+  # is op een oud image nooit een kapotte deploy veroorzaken.
+  [ -n "${TTYD_INDEX:-}" ] && [ -f "$TTYD_INDEX" ] && set -- "$@" --index "$TTYD_INDEX"
   exec runuser -u devin -- "$@" /bin/bash -l
 fi
 
