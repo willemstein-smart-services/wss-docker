@@ -99,6 +99,11 @@ if [ $# -eq 0 ] || { [ $# -eq 1 ] && [ "$1" = "ttyd" ]; }; then
   set -- /usr/local/bin/ttyd --writable --port 7681 --cwd "$WS"
   [ -n "${DEVIN_WEB_PASSWORD:-}" ] && \
     set -- "$@" --check-origin --credential "devin:${DEVIN_WEB_PASSWORD}"
+  # xterm.js theming per container (bv. groen 'robot' voor klant-zone):
+  #   TTYD_THEME='{"background":"#000000","foreground":"#00ff41"}'
+  #   TTYD_TITLE='DEVIN-KLANT'  (fixed tabtitel)
+  [ -n "${TTYD_THEME:-}" ] && set -- "$@" -t "theme=${TTYD_THEME}"
+  [ -n "${TTYD_TITLE:-}" ] && set -- "$@" -t "titleFixed=${TTYD_TITLE}"
   exec runuser -u devin -- "$@" /bin/bash -l
 fi
 

@@ -42,6 +42,9 @@ services:
     environment:
       TZ: Europe/Amsterdam
       DEVIN_WEB_PASSWORD: "VERVANG_DOOR_STERK_WACHTWOORD"
+      # ttyd 'robot/matrix' identiteit — in 1 oogopslag: dit is de KLANT-zone
+      TTYD_TITLE: "DEVIN-KLANT"
+      TTYD_THEME: '{"background":"#000000","foreground":"#00ff41","cursor":"#00ff41","cursorAccent":"#000000","selectionBackground":"#134d13","green":"#00ff41","brightGreen":"#66ff66","brightBlack":"#1a3d1a"}'
     volumes:
       # Eigen home-volume: eigen credentials.toml, workspace, ssh-keys —
       # bewust GEEN mount naar /volume1/docker/devin/home (interne zone!).

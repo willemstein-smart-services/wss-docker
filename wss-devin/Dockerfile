@@ -3,7 +3,7 @@ FROM debian:trixie-slim
 LABEL org.opencontainers.image.title="WSS Devin Linux"
 LABEL org.opencontainers.image.description="Debian Slim: dev-tools, ttyd webterminal, cron"
 LABEL org.opencontainers.image.source="https://github.com/willemstein-smart-services/wss-docker"
-LABEL org.opencontainers.image.version="1.2.4"
+LABEL org.opencontainers.image.version="1.2.5"
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Europe/Amsterdam
