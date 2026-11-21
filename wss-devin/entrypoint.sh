@@ -118,10 +118,18 @@ if [ $# -eq 0 ] || { [ $# -eq 1 ] && [ "$1" = "ttyd" ]; }; then
   #   TTYD_TITLE='DEVIN-KLANT'  (fixed tabtitel)
   [ -n "${TTYD_THEME:-}" ] && set -- "$@" -t "theme=${TTYD_THEME}"
   [ -n "${TTYD_TITLE:-}" ] && set -- "$@" -t "titleFixed=${TTYD_TITLE}"
-  # TTYD_INDEX: custom index.html (bv. agent-header bar boven de terminal).
-  # Alleen gebruiken als het bestand er ook is: zo kan een env die al gezet
-  # is op een oud image nooit een kapotte deploy veroorzaken.
+  # TTYD_INDEX: volledig eigen index.html (alleen als het bestand bestaat).
   [ -n "${TTYD_INDEX:-}" ] && [ -f "$TTYD_INDEX" ] && set -- "$@" --index "$TTYD_INDEX"
+  # TTYD_AGENT_NAME/_DESC: header-bar via het in-image template — de tekst
+  # leeft dus in de compose/stack-env en overleeft elke redeploy/rebuild.
+  if [ -n "${TTYD_AGENT_NAME:-}" ]; then
+    _esc() { printf '%s' "$1" | sed "s/[&|'\\\\]/\\\\&/g"; }
+    _tpl=/usr/local/lib/wss/ttyd-index-agent.html
+    _out=/tmp/ttyd-index-agent.html
+    [ -f "$_tpl" ] && sed -e "s/__AGENT_NAME__/$(_esc "$TTYD_AGENT_NAME")/g" \
+      -e "s/__AGENT_DESC__/$(_esc "${TTYD_AGENT_DESC:-}")/g" "$_tpl" > "$_out" \
+      && set -- "$@" --index "$_out"
+  fi
   exec runuser -u devin -- "$@" /bin/bash -l
 fi
 

@@ -125,11 +125,12 @@ RUN chmod 755 /entrypoint.sh
 COPY bin/ /usr/local/lib/wss/bin/
 RUN chmod 755 /usr/local/lib/wss/bin/*.sh
 
-# Custom ttyd-index met "Agent: DevinKlant" header-bar — actief als de
-# container TTYD_INDEX=/usr/local/lib/wss/ttyd-index-klant.html zet
-# (klant-stack). In-image i.p.v. bind-mount: Portainer git-stacks checken
-# alleen de compose-context uit, relatieve binds op losse files falen.
-COPY ttyd-index-klant.html /usr/local/lib/wss/ttyd-index-klant.html
+# ttyd index-template met agent header-bar (__AGENT_NAME__/__AGENT_DESC__
+# placeholders). Actief als de container TTYD_AGENT_NAME zet — de entrypoint
+# rendert dan /tmp/ttyd-index-agent.html en start ttyd met --index.
+# In-image i.p.v. bind-mount: Portainer git-stacks checken alleen de
+# compose-context uit, relatieve binds op losse files falen.
+COPY ttyd-index-agent.html /usr/local/lib/wss/ttyd-index-agent.html
 
 EXPOSE 7681
 

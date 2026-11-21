@@ -21,6 +21,10 @@ services:
     environment:
       TZ: Europe/Amsterdam
       DEVIN_WEB_PASSWORD: "VERVANG_DOOR_STERK_WACHTWOORD"
+      # Agent header-bar boven de ttyd-terminal — tekst aanpasbaar via deze
+      # env's (Portainer stack-vars of hier), overleeft redeploy + rebuild.
+      TTYD_AGENT_NAME: "Agent: AdminDevin"
+      TTYD_AGENT_DESC: "Interne-zone AI van Willemstein Smart Services — infra, monitoring, concept-sites en de WSS-monorepo. Heeft interne credentials; klant-werk loopt via DevinKlant (.70)."
     volumes:
       # Persistent home: Devin install, chats, ssh-keys, workspace
       - /volume1/docker/devin/home:/home/devin

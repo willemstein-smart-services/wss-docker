@@ -52,11 +52,10 @@ services:
       DEVIN_WEB_PASSWORD: "VERVANG_DOOR_STERK_WACHTWOORD"
       # ttyd 'robot/matrix' identiteit — in 1 oogopslag: dit is de KLANT-zone
       TTYD_TITLE: "DEVIN-KLANT"
-      # Custom index met "Agent: DevinKlant" header-bar boven de terminal —
-      # het bestand zit IN het image (wss-devin/ttyd-index-klant.html);
-      # geen bind-mount: Portainer git-stacks checken alleen de
-      # compose-context uit en relatieve binds op losse files falen.
-      TTYD_INDEX: /usr/local/lib/wss/ttyd-index-klant.html
+      # Agent header-bar boven de ttyd-terminal — tekst aanpasbaar via deze
+      # env's (Portainer stack-vars of hier), overleeft redeploy + rebuild.
+      TTYD_AGENT_NAME: "Agent: DevinKlant"
+      TTYD_AGENT_DESC: "Klant-zone AI van Willemstein Smart Services — bouwt, deployt en onderhoudt klant-websites. Fysiek gescheiden van interne WSS-infra; deploys lopen via de klant deploy-lock."
       TTYD_THEME: '{"background":"#000000","foreground":"#00ff41","cursor":"#00ff41","cursorAccent":"#000000","selectionBackground":"#134d13","green":"#00ff41","brightGreen":"#66ff66","brightBlack":"#1a3d1a"}'
     volumes:
       # Eigen home-volume: eigen credentials.toml, workspace, ssh-keys —
