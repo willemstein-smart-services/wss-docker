@@ -33,7 +33,7 @@ fi
 # Deze jobs staan NIET in de user-crontab (die leeft in container-fs en
 # overleeft geen recreate). Entrypoint installeert ze idempotent in het
 # cron.d-volume — na elke (re)deploy staan ze er vanzelf weer.
-for job in wss-cronbeat wss-portainer-audit wss-devin-selfcheck; do
+for job in wss-cronbeat wss-portainer-audit wss-devin-selfcheck wss-klant-handover; do
   [ -f "/etc/cron.d/$job" ] && continue
   case "$job" in
     wss-cronbeat)
@@ -46,6 +46,10 @@ for job in wss-cronbeat wss-portainer-audit wss-devin-selfcheck; do
       # image-pad (geen workspace-afhankelijkheid -> werkt ook in klant-container)
       line='41 * * * * devin /usr/local/lib/wss/bin/wss_devin_selfcheck.sh >> /var/log/wss/devin-selfcheck.log 2>&1'
       need=/usr/local/lib/wss/bin/wss_devin_selfcheck.sh ;;
+    wss-klant-handover)
+      # bundles voor DevinKlant; slaat over zodra script ontbreekt (klant-container)
+      line='47 * * * * devin /home/devin/workspace/bin/wss_klant_handover.sh --auto >> /var/log/wss/handover.log 2>&1'
+      need=/home/devin/workspace/bin/wss_klant_handover.sh ;;
   esac
   # workspace-scripts ontbreken in bv. de klant-container -> job overslaan
   # i.p.v. elke cron-run 'not found' te loggen
