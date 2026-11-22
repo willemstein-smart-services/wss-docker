@@ -13,6 +13,7 @@ org-GHCR: `ghcr.io/willemstein-smart-services/<image>:<tag>` via
 | `.github/workflows/build-<image>.yml` | per-image build & push |
 | `stacks/wss/docker-compose.yml` | Portainer-stack (devin+flows+monitoring) |
 | `stacks/wss-devin-klant/docker-compose.yml` | losse stack: Devin CLI voor klant-werk (trust-zone gescheiden van interne `devin`) |
+| `stacks/wss-devin-testorch/docker-compose.yml` | losse stack: 2 Devin CLI's — test (.161) + orchestrator (.162) |
 | `wss-devin/bin/` | scripts IN het image (`/usr/local/lib/wss/bin/`): loki_event, devin-selfcheck |
 
 ## Release-flow (per image)
@@ -58,16 +59,16 @@ Secrets horen NIET in compose en niet in Portainer-velden:
 - Let op container-uid: grafana draait als uid 472 — een `600`-envfile
   is dan onleesbaar (vandaar 604: owner-only write, world read).
 
-## Twee Devin-zones: devin (intern) vs wss-devin-klant
+## Devin-zones: devin (intern), klant, test + orchestrator
 
-Twee Devin-containers, twee trust-zones, zelfde `wss-devin`-image:
+Vier Devin-containers, eigen trust-zones, zelfde `wss-devin`-image:
 
-| | `devin` (AdminDevin) | `wss-devin-klant` (DevinKlant) |
-|---|---|---|
-| Stack | `stacks/wss/` | `stacks/wss-devin-klant/` |
-| IP | 192.168.10.61 | 192.168.10.70 |
-| Home-volume | `/volume1/docker/devin/home` | `/volume1/docker/devin-klant/home` |
-| Toegang | interne creds, mounts, monitoring | ALLEEN klant-creds — geen interne mounts |
+| | `devin` (AdminDevin) | `wss-devin-klant` (DevinKlant) | `wss-devin-test` (TestDevin) | `wss-devin-orchestrator` |
+|---|---|---|---|---|
+| Stack | `stacks/wss/` | `stacks/wss-devin-klant/` | `stacks/wss-devin-testorch/` | `stacks/wss-devin-testorch/` |
+| IP | 192.168.10.61 | 192.168.10.70 | 192.168.10.161 | 192.168.10.162 |
+| Home-volume | `/volume1/docker/devin/home` | `/volume1/docker/devin-klant/home` | `/volume1/docker/devin-test/home` | `/volume1/docker/devin-orchestrator/home` |
+| Toegang | interne creds, mounts, monitoring | ALLEEN klant-creds — geen interne mounts | sandbox/test — eigen geseede creds | orch. over de zones — eigen geseede creds, bereikt agents via docker_network |
 
 **CLI-seed**: de Devin CLI leeft op het home-volume, niet in het image.
 Bij een verse container alleen `.local/bin` + `.local/share/devin/cli/_versions`

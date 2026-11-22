@@ -1,0 +1,99 @@
+# WSS-DEVIN-TESTORCH stack — 2 extra Devin CLI containers
+#   - wss-devin-test         (.161) = TEST/sandbox: image-, script- en
+#                             config-experimenten vóór uitrol naar
+#                             devin (.61) / wss-devin-klant (.70).
+#   - wss-devin-orchestrator (.162) = ORCHESTRATOR: verdeelt en
+#                             coordineert werk over de Devin-zones.
+#
+# LOSSE STACK bewust (zelfde reden als wss-devin-klant):
+#   eigen lifecycle — redeploy raakt interne/klant-werk niet en andersom.
+#   Portainer: eigen git-repository stack -> dit compose-pad.
+#
+# TRUST-ZONE: beide containers hebben een EIGEN home-volume en krijgen
+#   alleen de credentials die expliciet geseed worden (zie CLI-SEED).
+#   Geen interne mounts (homarr/kuma/flows/web_www/backups) — de
+#   orchestrator bereikt de andere agents via docker_network (hostnames/
+#   IP's resolven via embedded DNS), niet via gedeelde volumes.
+#
+# Image: hetzelfde ghcr wss-devin image — loki_event.sh +
+#   wss_devin_selfcheck.sh zitten IN het image (/usr/local/lib/wss/bin);
+#   entrypoint installeert de uurlijkse selfcheck automatisch in cron.d.
+#   Events dragen $(hostname) -> alert/feed onderscheidt per container.
+#   Loki-push: docker_network -> wss-loki:3100 resolved via embedded DNS.
+#
+# CLI-SEED op verse home-volume (devin binary staat NIET in het image):
+#   kopieer UITSLUITEND .local/bin + .local/share/devin/cli/_versions van
+#   de interne devin. NOOIT de rest van cli/ meenemen — sessions.db,
+#   transcripts/, summaries/, trusted_workspaces.json, installation_id,
+#   daemon/, plugins*/ zijn LOKALE staat. credentials.toml + .config/devin
+#   blijven sowieso intern (eigen login per container).
+services:
+  devin-test:
+    image: ghcr.io/willemstein-smart-services/wss-devin:latest
+    pull_policy: always   # :latest is mutable -> altijd nieuwste pullen bij deploy
+    container_name: wss-devin-test
+    hostname: wss-devin-test
+    restart: unless-stopped
+    mem_limit: 3g   # zelfde limit als devin: losgeslagen AI-run mag NAS niet meenemen
+    # json-file logrotatie (AVG/opslag): max 3x10MB per container
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    environment:
+      TZ: Europe/Amsterdam
+      DEVIN_WEB_PASSWORD: "VERVANG_DOOR_STERK_WACHTWOORD"
+      # ttyd identiteit — in 1 oogopslag: dit is de TEST-zone (amber)
+      TTYD_TITLE: "DEVIN-TEST"
+      TTYD_AGENT_NAME: "Agent: TestDevin"
+      TTYD_AGENT_DESC: "Test-zone AI van Willemstein Smart Services — sandbox voor image/script/config-experimenten vóór uitrol naar devin (.61) en DevinKlant (.70). Eigen geseede credentials; geen interne mounts."
+      TTYD_THEME: '{"background":"#0d0800","foreground":"#ffb000","cursor":"#ffb000","cursorAccent":"#000000","selectionBackground":"#4d3800","yellow":"#ffb000","brightYellow":"#ffcf66","brightBlack":"#3d2d1a"}'
+    volumes:
+      # Eigen home-volume: eigen credentials.toml, workspace, ssh-keys.
+      - /volume1/docker/devin-test/home:/home/devin
+      # Eigen cron.d + logs (zelfde volume-patroon als devin/klant)
+      - /volume1/docker/devin-test/home/cron.d:/etc/cron.d
+      - /volume1/docker/devin-test/home/logs:/var/log/wss
+    working_dir: /home/devin/workspace
+    stdin_open: true
+    tty: true
+    networks:
+      docker_network:
+        ipv4_address: 192.168.10.161
+
+  devin-orchestrator:
+    image: ghcr.io/willemstein-smart-services/wss-devin:latest
+    pull_policy: always   # :latest is mutable -> altijd nieuwste pullen bij deploy
+    container_name: wss-devin-orchestrator
+    hostname: wss-devin-orchestrator
+    restart: unless-stopped
+    mem_limit: 3g
+    # json-file logrotatie (AVG/opslag): max 3x10MB per container
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    environment:
+      TZ: Europe/Amsterdam
+      DEVIN_WEB_PASSWORD: "VERVANG_DOOR_STERK_WACHTWOORD"
+      # ttyd identiteit — in 1 oogopslag: dit is de ORCHESTRATOR (cyan)
+      TTYD_TITLE: "DEVIN-ORCH"
+      TTYD_AGENT_NAME: "Agent: Orchestrator"
+      TTYD_AGENT_DESC: "Orchestrator-AI van Willemstein Smart Services — verdeelt en coordineert werk over de Devin-zones (intern .61, klant .70, test .161). Eigen credentials; bereikt de andere agents via docker_network."
+      TTYD_THEME: '{"background":"#000a0d","foreground":"#00d0ff","cursor":"#00d0ff","cursorAccent":"#000000","selectionBackground":"#003d4d","cyan":"#00d0ff","brightCyan":"#66e6ff","brightBlack":"#1a2d3d"}'
+    volumes:
+      - /volume1/docker/devin-orchestrator/home:/home/devin
+      - /volume1/docker/devin-orchestrator/home/cron.d:/etc/cron.d
+      - /volume1/docker/devin-orchestrator/home/logs:/var/log/wss
+    working_dir: /home/devin/workspace
+    stdin_open: true
+    tty: true
+    networks:
+      docker_network:
+        ipv4_address: 192.168.10.162
+
+networks:
+  docker_network:
+    external: true
