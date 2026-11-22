@@ -40,8 +40,9 @@
 #   kopieert .local/bin + .local/share/devin/cli/_versions uit de interne
 #   devin-home — ALLEEN als _versions ontbreekt, dus een bewust andere
 #   CLI in test/orch wordt bij een redeploy niet teruggezet.
-#   Let op: init leest /host/devin/home (interne zone) maar kopieert
-#   enkel de binaries — geen credentials.toml/sessions/plugins.
+#   Plus devin_startup.ksh -> workspace (cp -n: lokale aanpassingen
+#   overleven redeploy). Let op: init leest /host/devin/home (interne
+#   zone) maar kopieert enkel de binaries — geen credentials/sessions.
 services:
   init-dirs:
     image: ghcr.io/willemstein-smart-services/wss-devin:latest
@@ -54,7 +55,7 @@ services:
     command:
       - sh
       - -c
-      - "rm -rf /host/home/cron.d /host/home/logs /host/home/workspace /host/home/.local; mkdir -p /host/devin-test/home/cron.d /host/devin-test/home/logs /host/devin-test/home/workspace /host/devin-orchestrator/home/cron.d /host/devin-orchestrator/home/logs /host/devin-orchestrator/home/workspace; if [ ! -d /host/devin-test/home/.local/share/devin/cli/_versions ]; then mkdir -p /host/devin-test/home/.local/share/devin/cli && cp -a /host/devin/home/.local/bin /host/devin-test/home/.local/ && cp -a /host/devin/home/.local/share/devin/cli/_versions /host/devin-test/home/.local/share/devin/cli/; fi; if [ ! -d /host/devin-orchestrator/home/.local/share/devin/cli/_versions ]; then mkdir -p /host/devin-orchestrator/home/.local/share/devin/cli && cp -a /host/devin/home/.local/bin /host/devin-orchestrator/home/.local/ && cp -a /host/devin/home/.local/share/devin/cli/_versions /host/devin-orchestrator/home/.local/share/devin/cli/; fi; chown -R 1000:1000 /host/devin-test /host/devin-orchestrator"
+      - "rm -rf /host/home/cron.d /host/home/logs /host/home/workspace /host/home/.local; mkdir -p /host/devin-test/home/cron.d /host/devin-test/home/logs /host/devin-test/home/workspace /host/devin-orchestrator/home/cron.d /host/devin-orchestrator/home/logs /host/devin-orchestrator/home/workspace; if [ ! -d /host/devin-test/home/.local/share/devin/cli/_versions ]; then mkdir -p /host/devin-test/home/.local/share/devin/cli && cp -a /host/devin/home/.local/bin /host/devin-test/home/.local/ && cp -a /host/devin/home/.local/share/devin/cli/_versions /host/devin-test/home/.local/share/devin/cli/; fi; if [ ! -d /host/devin-orchestrator/home/.local/share/devin/cli/_versions ]; then mkdir -p /host/devin-orchestrator/home/.local/share/devin/cli && cp -a /host/devin/home/.local/bin /host/devin-orchestrator/home/.local/ && cp -a /host/devin/home/.local/share/devin/cli/_versions /host/devin-orchestrator/home/.local/share/devin/cli/; fi; cp -n /host/devin/home/workspace/devin_startup.ksh /host/devin-test/home/workspace/ || true; cp -n /host/devin/home/workspace/devin_startup.ksh /host/devin-orchestrator/home/workspace/ || true; chown -R 1000:1000 /host/devin-test /host/devin-orchestrator"
     volumes:
       - /volume1/docker:/host
     restart: "no"
