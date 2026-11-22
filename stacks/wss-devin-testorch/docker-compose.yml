@@ -48,10 +48,13 @@ services:
     container_name: wss-devin-testorch-init
     # command als argv-lijst: geen shell-lexing door compose/Portainer
     # (string-vorm met quotes werd naïef gesplitst -> sh syntax error, exit 2)
+    # GEEN shell-variabelen hier: compose interpoleert $c al vóór de
+    # container start -> '$c' werd '' en alles landde in /host/home/.
+    # Daarom letterlijke paden + opschoning van die foute /host/home-tree.
     command:
       - sh
       - -c
-      - "for c in devin-test devin-orchestrator; do mkdir -p /host/$c/home/cron.d /host/$c/home/logs /host/$c/home/workspace; done; for c in devin-test devin-orchestrator; do if [ ! -d /host/$c/home/.local/share/devin/cli/_versions ]; then mkdir -p /host/$c/home/.local/share/devin/cli && cp -a /host/devin/home/.local/bin /host/$c/home/.local/ && cp -a /host/devin/home/.local/share/devin/cli/_versions /host/$c/home/.local/share/devin/cli/; fi; done; chown -R 1000:1000 /host/devin-test /host/devin-orchestrator"
+      - "rm -rf /host/home/cron.d /host/home/logs /host/home/workspace /host/home/.local; mkdir -p /host/devin-test/home/cron.d /host/devin-test/home/logs /host/devin-test/home/workspace /host/devin-orchestrator/home/cron.d /host/devin-orchestrator/home/logs /host/devin-orchestrator/home/workspace; if [ ! -d /host/devin-test/home/.local/share/devin/cli/_versions ]; then mkdir -p /host/devin-test/home/.local/share/devin/cli && cp -a /host/devin/home/.local/bin /host/devin-test/home/.local/ && cp -a /host/devin/home/.local/share/devin/cli/_versions /host/devin-test/home/.local/share/devin/cli/; fi; if [ ! -d /host/devin-orchestrator/home/.local/share/devin/cli/_versions ]; then mkdir -p /host/devin-orchestrator/home/.local/share/devin/cli && cp -a /host/devin/home/.local/bin /host/devin-orchestrator/home/.local/ && cp -a /host/devin/home/.local/share/devin/cli/_versions /host/devin-orchestrator/home/.local/share/devin/cli/; fi; chown -R 1000:1000 /host/devin-test /host/devin-orchestrator"
     volumes:
       - /volume1/docker:/host
     restart: "no"
@@ -75,7 +78,9 @@ services:
       # ttyd identiteit — in 1 oogopslag: dit is de TEST-zone (amber)
       TTYD_TITLE: "DEVIN-TEST"
       TTYD_AGENT_NAME: "Agent: TestDevin"
-      TTYD_AGENT_DESC: "Test-zone AI van Willemstein Smart Services — sandbox voor image/script/config-experimenten vóór uitrol naar devin (.61) en DevinKlant (.70). Eigen geseede credentials; geen interne mounts."
+      # Let op: GEEN '/' in DESC — '/' is de sed-delimiter in de
+      # index-template render (entrypoint) en breekt de header-bar.
+      TTYD_AGENT_DESC: "Test-zone AI van Willemstein Smart Services — sandbox voor image-, script- en config-experimenten vóór uitrol naar devin (.61) en DevinKlant (.70). Eigen geseede credentials; geen interne mounts."
       TTYD_THEME: '{"background":"#0d0800","foreground":"#ffb000","cursor":"#ffb000","cursorAccent":"#000000","selectionBackground":"#4d3800","yellow":"#ffb000","brightYellow":"#ffcf66","brightBlack":"#3d2d1a"}'
     volumes:
       # Eigen home-volume: eigen credentials.toml, workspace, ssh-keys.
