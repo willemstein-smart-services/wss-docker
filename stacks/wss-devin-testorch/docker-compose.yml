@@ -22,10 +22,11 @@
 #   Loki-push: docker_network -> wss-loki:3100 resolved via embedded DNS.
 #
 # CLI-SEED op verse home-volume (devin binary staat NIET in het image):
-#   kopieer UITSLUITEND .local/bin + .local/share/devin/cli/_versions van
-#   de interne devin. NOOIT de rest van cli/ meenemen — sessions.db,
-#   transcripts/, summaries/, trusted_workspaces.json, installation_id,
-#   daemon/, plugins*/ zijn LOKALE staat. credentials.toml + .config/devin
+#   geautomatiseerd via init-dirs hieronder — die kopieert UITSLUITEND
+#   .local/bin + .local/share/devin/cli/_versions van de interne devin.
+#   NOOIT de rest van cli/ meenemen — sessions.db, transcripts/,
+#   summaries/, trusted_workspaces.json, installation_id, daemon/,
+#   plugins*/ zijn LOKALE staat. credentials.toml + .config/devin
 #   blijven sowieso intern (eigen login per container).
 #
 # BOOTSTRAP: compose v2 maakt ontbrekende bind-bronnen NIET meer aan
@@ -34,6 +35,13 @@
 #   altijd), maakt de home-dirs + chownt naar uid 1000 (devin) en stopt.
 #   Idempotent -> veilig bij elke (re)deploy. Beide services wachten op
 #   service_completed_successfully zodat hun binds pas daarna resolven.
+#
+#   init-dirs doet OOK de CLI-seed (devin binary staat niet in het image):
+#   kopieert .local/bin + .local/share/devin/cli/_versions uit de interne
+#   devin-home — ALLEEN als _versions ontbreekt, dus een bewust andere
+#   CLI in test/orch wordt bij een redeploy niet teruggezet.
+#   Let op: init leest /host/devin/home (interne zone) maar kopieert
+#   enkel de binaries — geen credentials.toml/sessions/plugins.
 services:
   init-dirs:
     image: ghcr.io/willemstein-smart-services/wss-devin:latest
@@ -43,7 +51,7 @@ services:
     command:
       - sh
       - -c
-      - "mkdir -p /host/devin-test/home/cron.d /host/devin-test/home/logs /host/devin-test/home/workspace /host/devin-orchestrator/home/cron.d /host/devin-orchestrator/home/logs /host/devin-orchestrator/home/workspace && chown -R 1000:1000 /host/devin-test /host/devin-orchestrator"
+      - "for c in devin-test devin-orchestrator; do mkdir -p /host/$c/home/cron.d /host/$c/home/logs /host/$c/home/workspace; done; for c in devin-test devin-orchestrator; do if [ ! -d /host/$c/home/.local/share/devin/cli/_versions ]; then mkdir -p /host/$c/home/.local/share/devin/cli && cp -a /host/devin/home/.local/bin /host/$c/home/.local/ && cp -a /host/devin/home/.local/share/devin/cli/_versions /host/$c/home/.local/share/devin/cli/; fi; done; chown -R 1000:1000 /host/devin-test /host/devin-orchestrator"
     volumes:
       - /volume1/docker:/host
     restart: "no"
