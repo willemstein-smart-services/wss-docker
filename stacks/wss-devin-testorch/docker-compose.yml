@@ -38,11 +38,12 @@ services:
   init-dirs:
     image: ghcr.io/willemstein-smart-services/wss-devin:latest
     container_name: wss-devin-testorch-init
-    command: >-
-      sh -c 'mkdir -p
-        /host/devin-test/home/cron.d /host/devin-test/home/logs /host/devin-test/home/workspace
-        /host/devin-orchestrator/home/cron.d /host/devin-orchestrator/home/logs /host/devin-orchestrator/home/workspace
-        && chown -R 1000:1000 /host/devin-test /host/devin-orchestrator'
+    # command als argv-lijst: geen shell-lexing door compose/Portainer
+    # (string-vorm met quotes werd naïef gesplitst -> sh syntax error, exit 2)
+    command:
+      - sh
+      - -c
+      - "mkdir -p /host/devin-test/home/cron.d /host/devin-test/home/logs /host/devin-test/home/workspace /host/devin-orchestrator/home/cron.d /host/devin-orchestrator/home/logs /host/devin-orchestrator/home/workspace && chown -R 1000:1000 /host/devin-test /host/devin-orchestrator"
     volumes:
       - /volume1/docker:/host
     restart: "no"
