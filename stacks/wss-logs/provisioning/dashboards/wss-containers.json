@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 10,
+  "version": 11,
   "refresh": "30s",
   "time": {
     "from": "now-24h",
@@ -138,7 +138,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum by (container) (count_over_time({job=\"docker\", container=~\"devin|wss-.*|homarr.*\"} |~ \"(?i)error|exception|fatal\" !~ \"level=info|level=debug|scheduler_processor|context canceled|entry too far behind|failed to tail file|empty ring|apis/quotas|has timestamp too old|ingestion rate limit exceeded|no retries left|Parse Error: Header overflow|cleaning up inactive secure values|use of closed network connection|throwGeneralAxiosError|Cannot send notification to|EAI_AGAIN api.pushover.net|database is locked|Failed to write gzipped response|couldn't parse push request|could not fetch logs for container|wget: server returned error\"[$__range]))",
+          "expr": "sum by (container) (count_over_time({job=\"docker\", container=~\"devin|wss-.*|homarr.*\"} |~ \"(?i)error|exception|fatal\" !~ \"level=info|level=debug|scheduler_processor|context canceled|entry too far behind|failed to tail file|empty ring|apis/quotas|has timestamp too old|ingestion rate limit exceeded|no retries left|Parse Error: Header overflow|cleaning up inactive secure values|use of closed network connection|throwGeneralAxiosError|Cannot send notification to|EAI_AGAIN api.pushover.net|database is locked|Failed to write gzipped response|couldn't parse push request|could not fetch logs for container|wget: server returned error|Unexpected response: connect|caused by: connect ETIMEDOUT|Error: getaddrinfo EAI_AGAIN\"[$__range]))",
           "refId": "A",
           "queryType": "instant",
           "legendFormat": "{{container}}"

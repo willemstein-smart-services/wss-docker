@@ -33,6 +33,9 @@ Failed to write gzipped response   # middleware.gzip client-abort/UI-artifact (~
 couldn't parse push request   # Loki distributor weigert misvormde pushes (161x/2u 20-11: docker-events busybox-wget bug, gefixt in d9e1ed5) — zelfde familie als 'has timestamp too old'
 could not fetch logs for container   # Alloy tailer op gerecete/verdwenen container (18x rond docker-events redeploys 20-11) — zelfde familie als 'failed to tail file'
 wget: server returned error   # docker-events sidecar push-pad (busybox wget -> Loki 400, 161x/2u 20-11) — monitoring-artifact, gescoped op wget-prefix
+Unexpected response: connect  # homarr app-health connect-fails (EHOSTUNREACH 13x + ECONNREFUSED 6x /24h, 26-11) — zelfde ping-artifact familie als 'Parse Error: Header overflow'
+caused by: connect ETIMEDOUT  # uptime-kuma [MONITOR] aggregate connect-fail (15x in DNS/net-blip 04:2x 26-11) — duplicaat van KUMA_DOWN-signaal dat in site-app zichtbaar blijft; 'caused by:'-keten komt niet in kuma msg-velden voor
+Error: getaddrinfo EAI_AGAIN  # kuma/node check-path DNS-fail op wisselende targets (7x 26-11) — scoped op 'Error:'-prefix zodat site-app KUMA_DOWN "msg":"getaddrinfo EAI_AGAIN ..." NIET gematcht wordt
 
 # --- Syslog-side filters (wss-syslog.json, aparte familie van de docker-kaarten) ---
 # 'Syslog Feed (Filtered)' filtert óók:
